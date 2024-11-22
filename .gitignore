@@ -1,0 +1,76 @@
+
+# === Archivos y configuraciones específicas de IntelliJ IDEA ===
+.idea/                 # Configuración del IDE
+*.iws                  # Archivos de configuración temporales
+*.iml                  # Archivos de módulo
+.idea/**/workspace.xml # Configuración del espacio de trabajo (específica de usuario)
+.idea/**/tasks.xml     # Configuración de tareas
+.idea/dictionaries/    # Diccionarios personalizados
+.idea/libraries/       # Archivos de librerías descargadas
+
+# === Directorios de salida de compilación ===
+/out/                  # Directorio de salida de compilación (Java)
+/target/               # Directorio de salida de compilación (Maven/Gradle)
+/build/                # Directorio de salida de compilación (Gradle)
+
+# === Archivos de dependencia ===
+/*.jar                 # Dependencias empaquetadas
+/.mvn/                 # Configuración de Maven específica del entorno
+/.gradle/              # Configuración de Gradle específica del entorno
+.gradle/               # Caché de Gradle
+**/generated/          # Código generado automáticamente
+
+# === Archivos del sistema operativo ===
+.DS_Store              # macOS
+Thumbs.db              # Windows
+Desktop.ini            # Windows
+
+# === Archivos de entorno ===
+*.env                  # Archivos de variables de entorno
+*.env.local            # Archivos locales de entorno
+
+# === Logs y temporales ===
+*.log                  # Archivos de log
+*.tmp                  # Archivos temporales
+*.swp                  # Archivos de intercambio (Vim)
+*.bak                  # Archivos de respaldo
+*.orig                 # Conflictos de fusión
+
+# === Archivos de prueba y herramientas ===
+**/test-output/        # Resultados de pruebas (TestNG)
+**/coverage/           # Resultados de cobertura
+**/.idea_test          # Configuración de prueba de IntelliJ
+
+# === Otros archivos no necesarios ===
+*.class                # Archivos compilados de Java
+*.exe                  # Archivos ejecutables
+*.dll                  # Archivos de librerías dinámicas
+*.pyc                  # Archivos compilados de Python
+*.o                    # Archivos objeto
+*.obj                  # Archivos de depuración de C++
+
+# === Cachés y configuraciones específicas ===
+**/.cache/             # Cachés generadas
+**/.settings/          # Configuraciones del proyecto específicas del IDE
+.vscode/               # Configuraciones de Visual Studio Code (si se usa ocasionalmente)
+
+# === Archivos específicos de Spring Boot ===
+/target/               # Directorio de salida de compilación (Maven)
+/build/                # Directorio de salida de compilación (Gradle)
+*.jar                  # Archivos JAR generados
+*.war                  # Archivos WAR generados
+
+# === Archivos de configuración local ===
+*.env                  # Variables de entorno
+application-*.yml      # Configuración específica del entorno
+application-*.properties # Configuración específica del entorno
+
+# === Cachés ===
+.mvn/                  # Configuración de Maven
+.gradle/               # Configuración de Gradle
+/logs/                 # Directorio de logs
+*.log                  # Archivos de logs
+
+# === Directorios de prueba y resultados ===
+/test-output/          # Resultados de pruebas
+/coverage/             # Cobertura de código
