@@ -7,6 +7,11 @@
 .idea/**/tasks.xml     # Configuración de tareas
 .idea/dictionaries/    # Diccionarios personalizados
 .idea/libraries/       # Archivos de librerías descargadas
+.idea/**/compiler.xml
+.idea/**/encodings.xml
+.idea/**/jarRepositories.xml
+.idea/**/misc.xml
+.idea/**/vcs.xml
 
 # === Directorios de salida de compilación ===
 /out/                  # Directorio de salida de compilación (Java)
