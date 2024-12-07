@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-Migos</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style-catalogo.css">
+</head>
+
+<body class="Catalogo">
+    <div class="navbar">
+     
+        <div class="menu-container">
+            <input type="checkbox" id="toggle-menu" class="toggle-menu">
+            <label for="toggle-menu" class="menu-icon">☰ Menú</label>
+           
+             
+            
+            <nav class="menu">
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="#">Mi Perfil</a></li>
+                    <li><a href="biblioteca">Mi Biblioteca</a></li>
+                    <li><a href="#">Noticias</a></li>
+                    <li><a href="/">Cerrar</a></li>
+                </ul>
+            </nav>
+        </div>
+
+     
+        <div class="boton-derecha">
+            <div class="usuario-menu">
+                <button class="btn-icon" onclick="toggleMenu()">
+                    <i class="fas fa-user"></i>
+                </button>
+
+                <div class="submenu-usuario">
+                    <ul>
+                        <li><a href="login">Iniciar sesión</a></li>
+                        <li><a href="registro">Registrarse</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="anuncio">
+        <a href="https://www.instant-gaming.com/es/black-friday/">
+            <img src="https://www.instant-gaming.com/themes/igv2/modules/promo_page/blackfriday_2024/images/banner.jpg" width="700" height="300" alt="Anuncio" rel="noopener noreferrer">
+        </a>
+    </div>
+
+
+    <div>
+        <section class="juegos">
+            <h2>Juegos Disponibles  </h2>
+            <h3>   <input type="text" id="busqueda" placeholder="Buscar juego..." onkeyup="buscarJuego()">
+                <i class="fas fa-search"></i></h3>
+
+         
+
+            <div class="juego-lista" id="juego-lista">
+            </div>
+
+            <div id="pagination" class="pagination">
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Lista de juegos
+        const juegos = [
+            { name: 'Star Wars Outlaws', image: 'https://gaming-cdn.com/images/products/14344/616x353/star-wars-outlaws-pc-juego-ubisoft-connect-cover.jpg?v=1725519453', link: 'https://www.instant-gaming.com/es/14344-comprar-star-wars-outlaws-pc-juego-ubisoft-connect/?currency=USD&igr=zLeros' },
+            { name: 'Juego 2', image: 'https://example.com/image2.jpg', link: '#' },
+            { name: 'Juego 3', image: 'https://example.com/image3.jpg', link: '#' },
+            { name: 'Juego 4', image: 'https://example.com/image4.jpg', link: '#' },
+            { name: 'Juego 5', image: 'https://example.com/image5.jpg', link: '#' },
+            { name: 'Juego 6', image: 'https://example.com/image6.jpg', link: '#' },
+            { name: 'Juego 7', image: 'https://example.com/image7.jpg', link: '#' },
+            { name: 'Juego 8', image: 'https://example.com/image8.jpg', link: '#' },
+            { name: 'Juego 9', image: 'https://example.com/image9.jpg', link: '#' },
+            { name: 'Juego 10', image: 'https://example.com/image10.jpg', link: '#' },
+            { name: 'Juego 11', image: 'https://example.com/image11.jpg', link: '#' },
+            { name: 'Juego 12', image: 'https://example.com/image12.jpg', link: '#' },
+            { name: 'Juego 13', image: 'https://example.com/image13.jpg', link: '#' },
+            { name: 'Juego 14', image: 'https://example.com/image14.jpg', link: '#' },
+            { name: 'Juego 15', image: 'https://example.com/image15.jpg', link: '#' },
+        ];
+
+        const juegosPorPagina = 12;
+        let paginaActual = 1;
+
+        
+        function mostrarJuegos(pagina, juegosFiltrados = juegos) {
+            const inicio = (pagina - 1) * juegosPorPagina;
+            const fin = inicio + juegosPorPagina;
+            const juegosPagina = juegosFiltrados.slice(inicio, fin);
+
+            const juegoLista = document.getElementById('juego-lista');
+            juegoLista.innerHTML = '';
+
+           
+            juegosPagina.forEach(juego => {
+                const juegoItem = document.createElement('div');
+                juegoItem.classList.add('juego-item');
+                juegoItem.innerHTML = `
+                    <img src="${juego.image}" alt="${juego.name}">
+                    <h3>${juego.name}</h3>
+                    <a href="${juego.link}" class="btn-jugar">+info</a>
+                    <button class="btn-biblioteca" onclick="addToLibrary('${juego.name}', '${juego.image}')">Agregar a mi biblioteca</button>
+                `;
+                juegoLista.appendChild(juegoItem);
+            });
+
+            mostrarPaginacion(pagina, juegosFiltrados);
+        }
+
+       
+        function mostrarPaginacion(pagina, juegosFiltrados) {
+            const totalPaginas = Math.ceil(juegosFiltrados.length / juegosPorPagina);
+            const paginacion = document.getElementById('pagination');
+            paginacion.innerHTML = '';
+
+           
+            if (pagina > 1) {
+                const botonAnterior = document.createElement('button');
+                botonAnterior.textContent = 'Anterior';
+                botonAnterior.onclick = () => mostrarJuegos(pagina - 1, juegosFiltrados);
+                paginacion.appendChild(botonAnterior);
+            }
+
+            
+            for (let i = 1; i <= totalPaginas; i++) {
+                const botonPagina = document.createElement('button');
+                botonPagina.textContent = i;
+                if (i === pagina) {
+                    botonPagina.disabled = true;
+                }
+                botonPagina.onclick = () => mostrarJuegos(i, juegosFiltrados);
+                paginacion.appendChild(botonPagina);
+            }
+
+            
+            if (pagina < totalPaginas) {
+                const botonSiguiente = document.createElement('button');
+                botonSiguiente.textContent = 'Siguiente';
+                botonSiguiente.onclick = () => mostrarJuegos(pagina + 1, juegosFiltrados);
+                paginacion.appendChild(botonSiguiente);
+            }
+        }
+
+        
+        function buscarJuego() {
+            const busqueda = document.getElementById('busqueda').value.toLowerCase();
+            const juegosFiltrados = juegos.filter(juego => juego.name.toLowerCase().includes(busqueda));
+            mostrarJuegos(1, juegosFiltrados); 
+        }
+
+       
+        mostrarJuegos(paginaActual);
+
+       
+        function addToLibrary(gameName, gameImage) {
+            let library = JSON.parse(localStorage.getItem('library')) || [];
+            library.push({ name: gameName, image: gameImage });
+            localStorage.setItem('library', JSON.stringify(library));
+            alert(gameName + ' ha sido agregado a tu biblioteca!');
+        }
+
+      
+        function toggleMenu() {
+            const submenu = document.querySelector('.submenu-usuario');
+            submenu.classList.toggle('mostrar');
+        }
+    </script>
+</body>
+
+</html>
