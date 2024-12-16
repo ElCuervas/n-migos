@@ -1,33 +1,43 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar sesión</title>
-    <link rel="stylesheet" href="/css/style-login-registro.css">
+    <title>Mi primer Login</title>
+
+    <!--JQUERY-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+    <!-- FRAMEWORK BOOTSTRAP para el estilo de la pagina-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    
+    <!-- Los iconos tipo Solid de Fontawesome-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
+    <script src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+
+    <!-- Nuestro css-->
+    <link rel="stylesheet" type="text/css" href="static/css/index.css" th:href="@{/css/index.css}">
+
 </head>
 <body>
-
-    <div class="contenedor-formulario">
-        <h1>N-Migos</h1>
-        <h2>Iniciar sesión</h2>
-        <form action="/iniciar-sesion" method="POST">
-            <div class="grupo-formulario">
-                <label for="nombre-usuario">Nombre de usuario</label>
-                <input type="text" id="nombre-usuario" name="nombre-usuario" required placeholder="Ingresa tu nombre de usuario">
+    <div class="modal-dialog text-center">
+        <div class="col-sm-8 main-section">
+            <div class="modal-content">
+                <div class="col-12 user-img">
+                    <img src="static/img/user.png" th:src="@{/img/user.png}"/>
+                </div>
+                    <div class="form-group" id="user-group">
+                        <input type="text" class="form-control" placeholder="Nombre de usuario" name="username"/>
+                    </div>
+                    <div class="form-group" id="contrasena-group">
+                        <input type="password" class="form-control" placeholder="Contrasena" name="password"/>
+                    </div>
+                    <form action="/" method="get">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-sign-in-alt"></i> Ingresar
+                        </button>
+                    </form>
             </div>
-            <div class="grupo-formulario">
-                <label for="contraseña">Contraseña</label>
-                <input type="password" id="contraseña" name="contraseña" required placeholder="Ingresa tu contraseña">
-            </div>
-            <div class="grupo-formulario">
-                <button type="submit" class="btn">Iniciar sesión</button>
-            </div>
-            <div class="grupo-formulario">
-                <p>¿No tienes cuenta? <a href="registro">Regístrate aquí</a></p>
-            </div>
-        </form>
+        </div>
     </div>
-
 </body>
 </html>
