@@ -10,23 +10,20 @@ body{
 }
 
 .modal-content{
-    background-color: #330404;
+    background-color: #120202;
     height: 350px;
     opacity: 95%;
     padding: 350px 20px; /*dimenciones*/
     padding-top: 30px; /*la parte de arriba*/
     box-shadow: 0px 0px 30px #848484;
 }
-.user-img{
-    margin-top: -50px;
-    margin-bottom: 35px;
-}
 
-.user-img img{
-    width: 100xp;
-    height: 100px;
-    box-shadow: 0px 0px 3px #848484;
-    border-radius: 50%;
+.register-img img{
+    width: 70xp;
+    height: 70px;
+    filter: drop-shadow(0px 0px 3px #000000);
+    margin-top: -150px; /* Mueve hacia abajo */
+    margin-left: -25px;
 }
 
 .form-group input{
@@ -64,15 +61,53 @@ body{
     content: "\f0ac";
 }
 
-button{
-    width: 60%;
-    margin: 2px 60px 10px;
+button {
+  background-color: #4d0101  !important; /* Cambia el color de fondo */
+  color: white; /* Cambia el color del texto */
+  border: none; /* Quita el borde si es necesario */
+  padding: 10px 20px; /* Ajusta el espacio interno */
+  font-size: 16px; /* Ajusta el tamaño del texto */
+  cursor: pointer; /* Cambia el cursor al pasar por encima */
+  outline: none !important; /* Elimina el borde azul */
+  border: none !important; /* Opcional: Elimina el borde predeterminado */
+  box-shadow: 0px 0px 10px #848484 !important;
 }
 
+button:hover {
+  background-color: #120000 !important; /* Cambia el color al pasar el mouse */
+}
 .forgot{
     padding: 5px 0;
 }
 
 .forgot a{
     color: white;
+}
+
+.circular-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #4d0101; /* Fondo normal */
+    color: white; /* Color del ícono normal */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    text-decoration: none; /* Sin subrayado */
+    cursor: pointer;
+    z-index: 9999;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.circular-button i {
+    color: white !important; /* Fuerza el color blanco */
+    transition: color 0.3s ease; /* Efecto de transición suave */
+}
+
+.circular-button:hover {
+    background-color: #120000; /* Cambia el fondo */
 }
