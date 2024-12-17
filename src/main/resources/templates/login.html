@@ -1,25 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
+    <!--JQUERY-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <!-- Importar FontAwesome para los íconos -->
+    <!-- FRAMEWORK BOOTSTRAP para el estilo de la pagina-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <!-- Los iconos tipo Solid de Fontawesome-->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
     <script src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 
-    <!-- Enlace al CSS existente -->
-    <link rel="stylesheet" href="/static/css/login.css">
+    <!-- Nuestro css-->
+    <link rel="stylesheet" type="text/css" href="static/css/login.css" th:href="@{/css/login.css}">
 </head>
 <body>
-<div id="app">
     <div class="modal-dialog text-center">
         <div class="col-sm-8 main-section">
             <div class="modal-content">
                 <!-- Imagen de usuario -->
                 <div class="col-12 user-img">
-                    <img src="static/img/user.png" alt="Usuario">
+                    <img src="static/img/user.png" th:src="@{/img/user.png}"/>
                 </div>
 
                 <!-- Formulario de login -->
@@ -34,7 +37,6 @@
                         <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
                     </button>
                 </form>
-
                 <!-- Botón de registro -->
                 <button id="registerButton" class="btn btn-secondary">
                     <i class="fas fa-user-plus"></i> Registrarse
@@ -42,41 +44,39 @@
             </div>
         </div>
     </div>
-</div>
+    <!-- Script del formulario -->
+    <script>
+        // Manejo del formulario de inicio de sesión
+        document.getElementById('loginForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-<!-- Script del formulario -->
-<script>
-    // Manejo del formulario de inicio de sesión
-    document.getElementById('loginForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                    credentials: 'include' // Incluye cookies en la solicitud
+                });
 
-        try {
-            const response = await fetch('/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
-                credentials: 'include' // Incluye cookies en la solicitud
-            });
-
-            if (response.ok) {
-                alert('Inicio de sesión exitoso');
-                window.location.href = '/menu'; // Redirige al menú
-            } else {
-                alert('Usuario o contraseña incorrectos');
+                if (response.ok) {
+                    alert('Inicio de sesión exitoso');
+                    window.location.href = '/menu'; // Redirige al menú
+                } else {
+                    alert('Usuario o contraseña incorrectos');
+                }
+            } catch (error) {
+                console.error('Error al iniciar sesión:', error);
+                alert('Ocurrió un problema al iniciar sesión.');
             }
-        } catch (error) {
-            console.error('Error al iniciar sesión:', error);
-            alert('Ocurrió un problema al iniciar sesión.');
-        }
-    });
+        });
 
-    // Redirección a la página de registro
-    document.getElementById('registerButton').addEventListener('click', () => {
-        window.location.href = '/register'; // Redirige a la página de registro
-    });
-</script>
+        // Redirección a la página de registro
+        document.getElementById('registerButton').addEventListener('click', () => {
+            window.location.href = '/register'; // Redirige a la página de registro
+        });
+    </script>
 </body>
 </html>

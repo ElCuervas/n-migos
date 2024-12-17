@@ -30,10 +30,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String requestPath = request.getRequestURI();
 
-        if (requestPath.equals("/") || requestPath.startsWith("/login") || requestPath.startsWith("/auth") || requestPath.startsWith("/register") ) {
+        if (requestPath.equals("/")
+                || requestPath.startsWith("/login")
+                || requestPath.startsWith("/auth")
+                || requestPath.startsWith("/register")
+                || requestPath.startsWith("/css/")
+                || requestPath.startsWith("/img/")) {
             filterChain.doFilter(request, response);
             return;
         }
+
+
 
         final String token = getTokenFromRequest(request);
         final String username;
