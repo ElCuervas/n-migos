@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${juego.titulo}">Detalles del Juego</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/info.css">
+</head>
+
+<body class="Catalogo">
+    <div class="navbar">
+
+        <div class="menu-container">
+            <input type="checkbox" id="toggle-menu" class="toggle-menu">
+            <label for="toggle-menu" class="menu-icon">☰ Menú</label>
+
+            <nav class="menu">
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="#">Mi Perfil</a></li>
+                    <li><a href="biblioteca">Mi Biblioteca</a></li>
+                    <li><a href="#">Noticias</a></li>
+                    <li><a href="/">Cerrar</a></li>
+                </ul>
+            </nav>
+        </div>
+
+
+        <div class="boton-derecha">
+            <div class="usuario-menu">
+                <button class="btn-icon" onclick="toggleMenu()">
+                    <i class="fas fa-user"></i>
+                </button>
+
+                <div class="submenu-usuario">
+                    <ul>
+                        <li><a href="login">Iniciar sesión</a></li>
+                        <li><a href="register">Registrarse</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <section class="juegos">
+            <h1 th:text="${juego.titulo}">Título del Juego</h1>
+            <img th:src="${juego.imagen}" th:alt="${juego.titulo}" width="400" />
+            <p><strong>Fecha de lanzamiento:</strong> <span th:text="${juego.lanzamiento}"></span></p>
+            <p><strong>Calificación:</strong> <span th:text="${juego.calificacion}"></span></p>
+            <p><strong>Sinopsis:</strong></p>
+            <p th:utext="${juego.sinapsis}">Descripción del juego</p>
+            <a href="/" class="btn-volver">Volver al Catálogo</a>
+        </section>
+    </div>
+
+    <script>
+        // Lista de juegos
+        const juegos = [
+            { name: 'Star Wars Outlaws', image: 'https://gaming-cdn.com/images/products/14344/616x353/star-wars-outlaws-pc-juego-ubisoft-connect-cover.jpg?v=1725519453', link: 'https://www.instant-gaming.com/es/14344-comprar-star-wars-outlaws-pc-juego-ubisoft-connect/?currency=USD&igr=zLeros' }
+        ];
+
+        const juegosPorPagina = 12;
+        let paginaActual = 1;
+
+
+        function mostrarJuegos(pagina, juegosFiltrados = juegos) {
+            const inicio = (pagina - 1) * juegosPorPagina;
+            const fin = inicio + juegosPorPagina;
+            const juegosPagina = juegosFiltrados.slice(inicio, fin);
+
+            const juegoLista = document.getElementById('juego-lista');
+            juegoLista.innerHTML = '';
+
+
+            juegosPagina.forEach(juego => {
+                const juegoItem = document.createElement('div');
+                juegoItem.classList.add('juego-item');
+                juegoItem.innerHTML = `
+                    <img src="${juego.image}" alt="${juego.name}">
+                    <h3>${juego.name}</h3>
+                    <button class="btn-biblioteca" onclick="addToLibrary('${juego.name}', '${juego.image}')">Agregar a mi biblioteca</button>
+                `;
+                juegoLista.appendChild(juegoItem);
+            });
+
+            mostrarPaginacion(pagina, juegosFiltrados);
+        }
+
+
+        mostrarJuegos(paginaActual);
+
+
+        function addToLibrary(gameName, gameImage) {
+            let library = JSON.parse(localStorage.getItem('library')) || [];
+            library.push({ name: gameName, image: gameImage });
+            localStorage.setItem('library', JSON.stringify(library));
+            alert(gameName + ' ha sido agregado a tu biblioteca!');
+        }
+
+
+        function toggleMenu() {
+            const submenu = document.querySelector('.submenu-usuario');
+            submenu.classList.toggle('mostrar');
+        }
+    </script>
+</body>
+
+</html>
