@@ -17,7 +17,6 @@ public class InfoController {
     @GetMapping("/info")
     public String mostrarInfo(@RequestParam("id") Integer id, Model model) {
         Juego juego = servicioJuego.findById(id).get();
-        // Agregar el juego al modelo para enviarlo a Thymeleaf
         model.addAttribute("juego", juego);
 
         return "info";

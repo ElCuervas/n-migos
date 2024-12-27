@@ -1,5 +1,6 @@
 package com.company.n_migos.controller;
 
+import com.company.n_migos.entity.User;
 import com.company.n_migos.service.JwtService;
 import com.company.n_migos.dto.LoginRequest;
 import com.company.n_migos.dto.RegisterRequest;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
@@ -31,7 +33,7 @@ public class AuthController {
     }
 
     @GetMapping("/register")
-    public String register() {
+    public String registerPage() {
         return "register";
     }
 
@@ -96,5 +98,17 @@ public class AuthController {
     @PostMapping(value = "register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/biblioteca/{juegoId}")
+    public ResponseEntity<?> addJuegoBiblioteca(@RequestHeader("Authorization") String token, @PathVariable Integer juegoId) {
+
+        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
+        String username = jwtService.getUsernameFromToken(jwt);
+        User user = (User) userDetailsService.loadUserByUsername(username);
+
+        authService.addJuegoBiblioteca(user, juegoId);
+
+        return ResponseEntity.ok("Juego agregado a tu biblioteca");
     }
 }
