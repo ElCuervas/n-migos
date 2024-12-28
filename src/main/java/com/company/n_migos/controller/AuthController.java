@@ -6,6 +6,7 @@ import com.company.n_migos.dto.LoginRequest;
 import com.company.n_migos.dto.RegisterRequest;
 import com.company.n_migos.service.AuthService;
 import com.company.n_migos.dto.AuthResponse;
+import com.company.n_migos.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtService jwtService;
+    private final UserService UserService;
     private final UserDetailsService userDetailsService;
 
     @GetMapping("/login")
@@ -107,7 +109,7 @@ public class AuthController {
         String username = jwtService.getUsernameFromToken(jwt);
         User user = (User) userDetailsService.loadUserByUsername(username);
 
-        authService.addJuegoBiblioteca(user, juegoId);
+        UserService.addJuegoBiblioteca(user, juegoId);
 
         return ResponseEntity.ok("Juego agregado a tu biblioteca");
     }

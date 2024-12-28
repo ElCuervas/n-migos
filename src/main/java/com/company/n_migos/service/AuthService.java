@@ -54,18 +54,4 @@ public class AuthService {
             .build();
         
     }
-
-    public void addJuegoBiblioteca(User user, Integer juegoId) {
-        Juego juegouser = juegoRepository.findById(juegoId)
-                .orElseThrow(() -> new IllegalArgumentException("Juego con ID " + juegoId + " no encontrado"));
-
-        if (user.getBiblioteca().contains(juegouser)) {
-            throw new IllegalArgumentException("El juego ya está en la biblioteca del usuario");
-        }
-
-        user.getBiblioteca().add(juegouser);
-
-        userRepository.save(user);
-    }
-
 }

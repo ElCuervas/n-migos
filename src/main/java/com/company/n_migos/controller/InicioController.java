@@ -57,7 +57,7 @@ public class InicioController {
         model.addAttribute("isLoggedIn", isLoggedIn);
         if (isLoggedIn) {
             System.out.println(username);
-            model.addAttribute("username", username); // Nombre de usuario si está autenticado
+            model.addAttribute("username", username);
             model.addAttribute("token", token);
         }
         return "index";
