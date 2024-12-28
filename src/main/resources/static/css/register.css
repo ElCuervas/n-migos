@@ -5,7 +5,7 @@ body{
 
 .main-section{
     margin:0 auto;
-    margin-top:30%;
+    margin-top:20%;
     padding: 0;
 }
 
@@ -13,7 +13,7 @@ body{
     background-color: #120202;
     height: 350px;
     opacity: 95%;
-    padding: 350px 20px; /*dimenciones*/
+    padding: 450px 20px; /*dimenciones*/
     padding-top: 30px; /*la parte de arriba*/
     box-shadow: 0px 0px 30px #848484;
 }
@@ -46,18 +46,27 @@ body{
     content: "\f007";
 }
 
-.form-group#contrasena-group::before{
+.form-group#password-group::before{
     content: "\f023";
+}
+
+.form-group#firstname-group::before{
+    content: "\f0c6";
 }
 
 .form-group#lastname-group::before{
     content: "\f0c6";
 }
 
-.form-group#firstname-group::before{
-    content: "\f0c6";
+.form-group#celular-group::before{
+    content: "\f095";
 }
-.form-group#country-group::before{
+
+.form-group#correo-group::before{
+    content: "\f0e0";
+}
+
+.form-group#pais-group::before{
     content: "\f0ac";
 }
 

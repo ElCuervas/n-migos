@@ -34,22 +34,19 @@ public class InicioController {
         List<Juego> juegos = servicioJuego.findAll();
         model.addAttribute("juegos", juegos);
 
-        // Inicializar bandera para determinar si el usuario está autenticado
         boolean isLoggedIn = false;
         String username = null;
         String token = null;
 
-        // Obtener el token de las cookies
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) { // Supongamos que el nombre de la cookie es "token"
+                if ("jwt".equals(cookie.getName())) {
                     token = cookie.getValue();
                     try {
-                        username = jwtService.getUsernameFromToken(token); // Extraer el nombre de usuario del JWT
-                        isLoggedIn = true; // Usuario autenticado
+                        username = jwtService.getUsernameFromToken(token);
+                        isLoggedIn = true;
                     } catch (Exception e) {
-                        // Manejo de errores si el JWT es inválido o expirado
                         isLoggedIn = false;
                     }
                     break;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <title>Mi Perfil</title>
@@ -45,7 +45,7 @@
     <div class="main-body">
         <nav aria-label="breadcrumb" class="main-breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../../../../../n-migos.java/Perfil-El-n-migos/Perfil-El-n-migos/Catalogo.html">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Mi Perfil</li>
             </ol>
         </nav>
@@ -59,8 +59,8 @@
                             <img src="Img\TIO.png" alt="Usuario" width="200">
                             <div class="mt-3">
                                 <h4>Mi perfil</h4>
-                                <p class="text-secondary mb-1">"Un tio chill de cojones"</p>
-                                <p class="text-muted font-size-sm">Ubicación: New York, San Bernardo, CL</p>
+                                <p class="text-secondary mb-1" th:text="${user.username}">nombre</p>
+                                <p class="text-muted font-size-sm" th:text="${user.pais}">Pais</p>
                                 <button class="btn btn-outline-primary btn-sm">Cambiar Foto</button>
                             </div>
                         </div>
@@ -77,12 +77,7 @@
                                 <h6 class="mb-0">Nombre Completo</h6>
                             </div>
                             <div class="col-sm-7">
-                                <span id="name-view" class="view-mode">Elvio Lado Perez</span>
-                                <input id="name-edit" type="text" class="form-control edit-mode" value="Elvio Lado Perez">
-                            </div>
-                            <div class="col-sm-2 text-right">
-                                <button class="btn btn-sm btn-outline-primary toggle-edit">Editar</button>
-                                <button class="btn btn-sm btn-success edit-mode save-edit">Guardar</button>
+                                <span id="name-view" class="view-mode" th:text="${user.firstname}+' '+${user.lastname}"></span>
                             </div>
                         </div>
                         <hr>
@@ -92,27 +87,17 @@
                                 <h6 class="mb-0">Correo Electrónico</h6>
                             </div>
                             <div class="col-sm-7">
-                                <span id="email-view" class="view-mode">wuaj4j4j4j4@gmail.com</span>
-                                <input id="email-edit" type="email" class="form-control edit-mode" value="wuaj4j4j4j4@gmail.com">
-                            </div>
-                            <div class="col-sm-2 text-right">
-                                <button class="btn btn-sm btn-outline-primary toggle-edit">Editar</button>
-                                <button class="btn btn-sm btn-success edit-mode save-edit">Guardar</button>
+                                <span id="email-view" class="view-mode" th:text="${user.correo}"></span>
                             </div>
                         </div>
                         <hr>
-                        
+
                         <div class="row mb-3">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Teléfono</h6>
                             </div>
                             <div class="col-sm-7">
-                                <span id="phone-view" class="view-mode">666 727 696969</span>
-                                <input id="phone-edit" type="text" class="form-control edit-mode" value="666 727 696969">
-                            </div>
-                            <div class="col-sm-2 text-right">
-                                <button class="btn btn-sm btn-outline-primary toggle-edit">Editar</button>
-                                <button class="btn btn-sm btn-success edit-mode save-edit">Guardar</button>
+                                <span id="phone-view" class="view-mode" th:text="${user.celular}"></span>
                             </div>
                         </div>
                         <hr>
@@ -142,7 +127,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Mis Juegos en Biblioteca</h5>
                         <div class="row">
-                           
+
                             <div class="col-md-4">
                                 <div class="card">
                                     <img src="Img\75404921007-botw.jpg" class="card-img-top" alt="Game Cover">
@@ -154,7 +139,7 @@
                                     </div>
                                 </div>
                             </div>
-                           
+
                             <div class="col-md-4">
                                 <div class="card">
                                     <img src="Img\AAAAAA.jpg" class="card-img-top" alt="Game Cover">
@@ -269,88 +254,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(document).ready(function() {
-        // localStorage
-        function loadProfile() {
-            const profile = JSON.parse(localStorage.getItem('userProfile')) || {
-                name: 'Elvio Lado Perez',
-                email: 'wuaj4j4j4j4@gmail.com',
-                phone: '666 727 696969',
-                genres: 'Action, RPG, Adventure'
-            };
-            $('#name-view').text(profile.name);
-            $('#email-view').text(profile.email);
-            $('#phone-view').text(profile.phone);
-            $('#genres-view').html(profile.genres.split(', ').map(g => `<span class="badge badge-info">${g}</span>`).join(' '));
-            $('#name-edit').val(profile.name);
-            $('#email-edit').val(profile.email);
-            $('#phone-edit').val(profile.phone);
-            $('#genres-edit').val(profile.genres);
-        }
-
-        function saveProfile() {
-            const profile = {
-                name: $('#name-edit').val(),
-                email: $('#email-edit').val(),
-                phone: $('#phone-edit').val(),
-                genres: $('#genres-edit').val()
-            };
-            localStorage.setItem('userProfile', JSON.stringify(profile));
-            loadProfile();
-        }
-
-        // Cargar y guardar 
-        loadProfile();
-
-        $('.toggle-edit').click(function() {
-            const parent = $(this).closest('.row');
-            parent.find('.view-mode').hide();
-            parent.find('.edit-mode').show();
-        });
-
-        $('.save-edit').click(function() {
-            saveProfile();
-            const parent = $(this).closest('.row');
-            parent.find('.view-mode').show();
-            parent.find('.edit-mode').hide();
-        });
-
-        // Lista de deseados
-        function loadWishlist() {
-            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            $('#wishlist').empty();
-            wishlist.forEach((game, index) => {
-                $('#wishlist').append(`
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        ${game}
-                        <button class="btn btn-sm btn-danger" onclick="removeFromWishlist(${index})">Quitar</button>
-                    </li>
-                `);
-            });
-        }
-
-        function addToWishlist(game) {
-            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            wishlist.push(game);
-            localStorage.setItem('wishlist', JSON.stringify(wishlist));
-            loadWishlist();
-        }
-
-        window.removeFromWishlist = function(index) {
-            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            wishlist.splice(index, 1);
-            localStorage.setItem('wishlist', JSON.stringify(wishlist));
-            loadWishlist();
-        };
-
-        $('#wishlist-add').click(function() {
-            const game = $('#wishlist-input').val();
-            if (game.trim()) {
-                addToWishlist(game.trim());
-                $('#wishlist-input').val('');
-            }
-        });
-
-        loadWishlist();
     });
 </script>
 </body>

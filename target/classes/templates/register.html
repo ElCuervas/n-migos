@@ -31,17 +31,23 @@
           <div class="form-group" id="user-group">
             <input type="text" id="username" name="username" class="form-control" placeholder="Usuario" required>
           </div>
-          <div class="form-group" id="contrasena-group">
-            <input type="text" id="password" name="password" class="form-control" placeholder="Contraseña" required>
-          </div>
-          <div class="form-group" id="lastname-group">
-            <input type="text" id="lastname" name="lastname" class="form-control" placeholder="Apellido" required>
+          <div class="form-group" id="password-group">
+            <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" required>
           </div>
           <div class="form-group" id="firstname-group">
             <input type="text" id="firstname" name="firstname" class="form-control" placeholder="Nombre" required>
           </div>
-          <div class="form-group" id="country-group">
-            <input type="text" id="country" name="country" class="form-control" placeholder="Pais" required>
+          <div class="form-group" id="lastname-group">
+            <input type="text" id="lastname" name="lastname" class="form-control" placeholder="Apellido" required>
+          </div>
+          <div class="form-group" id="celular-group">
+            <input type="text" id="celular" name="celular" class="form-control" placeholder="Celular" required>
+          </div>
+          <div class="form-group" id="correo-group">
+            <input type="email" id="correo" name="correo" class="form-control" placeholder="Correo" required>
+          </div>
+          <div class="form-group" id="pais-group">
+            <input type="text" id="pais" name="pais" class="form-control" placeholder="Pais" required>
           </div>
           <button type="submit" class="btn btn-primary">
             <i class="fas fa-sign-in-alt"></i> Registrar
@@ -57,9 +63,11 @@
       const userData = {
           username: document.getElementById('username').value,
           password: document.getElementById('password').value,
-          lastname: document.getElementById('lastname').value,
           firstname: document.getElementById('firstname').value,
-          country: document.getElementById('country').value
+          lastname: document.getElementById('lastname').value,
+          celular: document.getElementById('celular').value,
+          correo: document.getElementById("correo").value,
+          pais: document.getElementById('pais').value
       };
 
       try {

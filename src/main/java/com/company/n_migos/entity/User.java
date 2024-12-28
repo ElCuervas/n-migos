@@ -26,10 +26,12 @@ public class User implements UserDetails {
     @Column(nullable = false)
     String username;
     @Column(nullable = false)
-    String lastname;
-    String firstname;
-    String country;
     String password;
+    String firstname;
+    String lastname;
+    String celular;
+    String correo;
+    String pais;
     @Enumerated(EnumType.STRING) 
     Role role;
     @ManyToMany
