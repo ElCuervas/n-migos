@@ -79,9 +79,26 @@
             </div>
         </div>
 
-
+        <!-- paginacion de juegos -->
         <div id="pagination" class="pagination">
+            <button th:if="${paginaActual > 1}"
+                    th:onclick="'location.href=\'/?pagina=' + (${paginaActual} - 1) + '\''">
+                Anterior
+            </button>
+
+            <button th:each="i : ${#numbers.sequence(1, totalPaginas)}"
+                    th:classappend="${i == paginaActual} ? 'active' : ''"
+                    th:onclick="'location.href=\'/?pagina=' + ${i} + '\''"
+                    th:text="${i}">
+            </button>
+
+
+            <button th:if="${paginaActual < totalPaginas}"
+                    th:onclick="'location.href=\'/?pagina=' + (${paginaActual} + 1) + '\''">
+                Siguiente
+            </button>
         </div>
+
     </section>
 </div>
 
@@ -109,87 +126,12 @@
             });
         }
     });
-    const juegosPorPagina = 12;
-    let paginaActual = 1;
-
-    function mostrarJuegos(pagina, juegosFiltrados = juegos) {
-        const inicio = (pagina - 1) * juegosPorPagina;
-        const fin = inicio + juegosPorPagina;
-        const juegosPagina = juegosFiltrados.slice(inicio, fin);
-
-        const juegoLista = document.getElementById('juego-lista');
-        juegoLista.innerHTML = '';
-
-        juegosPagina.forEach(juego => {
-            let buttonHTML = '';
-            if (isLoggedIn) {
-                buttonHTML = `
-                    <button class="btn-biblioteca"
-                            th:data-id="${juego.id}"
-                            th:data-token="${token}"
-                            onclick="addToLibrary(this)">
-                        Agregar a mi biblioteca
-                    </button>`;
-            }
-
-            const juegoItem = document.createElement('div');
-            juegoItem.classList.add('juego-item');
-            juegoItem.innerHTML = `
-                <img src="${juego.image}" alt="${juego.name}">
-                <h3>${juego.name}</h3>
-                <a href="${juego.link}" class="btn-jugar">+info</a>
-                ${buttonHTML}
-            `;
-            juegoLista.appendChild(juegoItem);
-        });
-
-        mostrarPaginacion(pagina, juegosFiltrados);
-    }
-
-
-
-    function mostrarPaginacion(pagina, juegosFiltrados) {
-        const totalPaginas = Math.ceil(juegosFiltrados.length / juegosPorPagina);
-        const paginacion = document.getElementById('pagination');
-        paginacion.innerHTML = '';
-
-
-        if (pagina > 1) {
-            const botonAnterior = document.createElement('button');
-            botonAnterior.textContent = 'Anterior';
-            botonAnterior.onclick = () => mostrarJuegos(pagina - 1, juegosFiltrados);
-            paginacion.appendChild(botonAnterior);
-        }
-
-
-        for (let i = 1; i <= totalPaginas; i++) {
-            const botonPagina = document.createElement('button');
-            botonPagina.textContent = i;
-            if (i === pagina) {
-                botonPagina.disabled = true;
-            }
-            botonPagina.onclick = () => mostrarJuegos(i, juegosFiltrados);
-            paginacion.appendChild(botonPagina);
-        }
-
-
-        if (pagina < totalPaginas) {
-            const botonSiguiente = document.createElement('button');
-            botonSiguiente.textContent = 'Siguiente';
-            botonSiguiente.onclick = () => mostrarJuegos(pagina + 1, juegosFiltrados);
-            paginacion.appendChild(botonSiguiente);
-        }
-    }
-
 
     function buscarJuego() {
         const busqueda = document.getElementById('busqueda').value.toLowerCase();
         const juegosFiltrados = juegos.filter(juego => juego.name.toLowerCase().includes(busqueda));
         mostrarJuegos(1, juegosFiltrados);
     }
-
-
-    mostrarJuegos(paginaActual);
 
 
     function addToLibrary(button) {

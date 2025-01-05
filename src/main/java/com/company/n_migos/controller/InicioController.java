@@ -30,10 +30,40 @@ public class InicioController {
     private final UserDetailsService userDetailsService;
 
     @GetMapping
-    public String listarTodosLosJuegos(Model model, HttpServletRequest request){
-        List<Juego> juegos = servicioJuego.findAll();
-        model.addAttribute("juegos", juegos);
+    public String listarTodosLosJuegos(@RequestParam(name = "pagina", defaultValue = "1") String paginaStr, Model model, HttpServletRequest request) {
+        int pagina;
+        try {
+            pagina = Integer.parseInt(paginaStr);
+        } catch (NumberFormatException e) {
+            pagina = 1; // en caso de error
+        }
+        configurarPaginacion(pagina, model);
+        configurarEstadoUsuario(model, request);
+        return "index";
+    }
 
+    //controla la paginacion de el catalogo
+    private void configurarPaginacion(int pagina, Model model) {
+        final int juegosPorPagina = 18;
+        List<Juego> juegos = servicioJuego.findAll();
+
+        // Calcular total de páginas
+        int totalJuegos = juegos.size();
+        int totalPaginas = (int) Math.ceil((double) totalJuegos / juegosPorPagina);
+
+        // Calcular inicio y fin para sublista
+        int inicio = (pagina - 1) * juegosPorPagina;
+        int fin = Math.min(inicio + juegosPorPagina, totalJuegos);
+        List<Juego> juegosPagina = juegos.subList(inicio, fin); // Filtra los juegos para la página actual
+
+        // Agregar juegos y datos de paginación al modelo
+        model.addAttribute("juegos", juegosPagina);
+        model.addAttribute("paginaActual", pagina);
+        model.addAttribute("totalPaginas", totalPaginas);
+    }
+
+    //controla el estado del usuario para permitir accesos a otros servicios
+    private void configurarEstadoUsuario(Model model, HttpServletRequest request) {
         boolean isLoggedIn = false;
         String username = null;
         String token = null;
@@ -53,14 +83,12 @@ public class InicioController {
                 }
             }
         }
-        System.out.println(isLoggedIn);
         model.addAttribute("isLoggedIn", isLoggedIn);
         if (isLoggedIn) {
-            System.out.println(username);
             model.addAttribute("username", username);
             model.addAttribute("token", token);
         }
-        return "index";
     }
+
 
 }

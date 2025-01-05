@@ -34,8 +34,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/","/info","/auth/**", "/login","/register", "/js/**", "/css/**", "/img/**").permitAll()
-                                .anyRequest()
-                                .authenticated()
+                                .requestMatchers("/**").permitAll() //cambio para permitir la paginacion de el catalogo
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager->
                         sessionManager
