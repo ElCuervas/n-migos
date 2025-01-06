@@ -42,7 +42,6 @@ public class PerfilController {
         if(!juegos.isEmpty()){
             model.addAttribute("juegos", juegos);
             model.addAttribute("notjuegos", true);
-            System.out.println(juegos.toString());
             System.out.println("hay juegos");
         } else{
             model.addAttribute("notjuegos", false);
