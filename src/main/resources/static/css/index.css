@@ -13,7 +13,7 @@ body {
 
 .navbar {
     display: flex;
-    justify-content: space-between; 
+    justify-content: space-between;
     align-items: center;
     padding: 10px;
     background-color: #000000;
@@ -213,7 +213,7 @@ body {
 }
 
 .btn-biblioteca {
-    background-color: #2939c4; 
+    background-color: #2939c4;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -225,7 +225,7 @@ body {
 }
 
 .btn-biblioteca:hover {
-    background-color: #45a049; 
+    background-color: #45a049;
 }
 
 

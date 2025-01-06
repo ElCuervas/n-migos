@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalogo N-migos</title>
+    <title>N-migos</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/index.css">
@@ -52,9 +52,7 @@
 </div>
 
 <div class="anuncio">
-    <a href="https://www.instant-gaming.com/es/black-friday/">
-        <img src="https://www.instant-gaming.com/themes/igv2/modules/promo_page/blackfriday_2024/images/banner.jpg" width="700" height="300" alt="Anuncio" rel="noopener noreferrer">
-    </a>
+    <img src="https://www.instant-gaming.com/themes/igv2/modules/promo_page/blackfriday_2024/images/banner.jpg" width="700" height="300" alt="Anuncio" rel="noopener noreferrer">
 </div>
 
 <div>
@@ -111,7 +109,6 @@
     });
     const juegosPorPagina = 12;
     let paginaActual = 1;
-
     function mostrarJuegos(pagina, juegosFiltrados = juegos) {
         const inicio = (pagina - 1) * juegosPorPagina;
         const fin = inicio + juegosPorPagina;
@@ -180,8 +177,6 @@
             paginacion.appendChild(botonSiguiente);
         }
     }
-
-
     function buscarJuego() {
         const busqueda = document.getElementById('busqueda').value.toLowerCase();
         const juegosFiltrados = juegos.filter(juego => juego.name.toLowerCase().includes(busqueda));
