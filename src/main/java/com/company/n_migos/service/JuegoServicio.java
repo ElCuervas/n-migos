@@ -42,4 +42,8 @@ public class JuegoServicio {
         juegoRepository.deleteById(Id);
     }
 
+    public List<Juego> buscarPorTitulo(String titulo) {
+        System.out.println("Buscando en la base de datos juegos con el título: " + titulo);
+        return juegoRepository.findByTituloContainingIgnoreCase(titulo);
+    }
 }

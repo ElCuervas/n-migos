@@ -11,7 +11,7 @@
 </head>
 
 <body class="Catalogo">
-<div class="navbar">
+    <div class="navbar">
 
     <div class="menu-container">
         <input type="checkbox" id="toggle-menu" class="toggle-menu">
@@ -60,11 +60,18 @@
 <div>
     <section class="juegos">
         <h2>Juegos Disponibles  </h2>
-        <h3>   <input type="text" id="busqueda" placeholder="Buscar juego..." onkeyup="buscarJuego()">
-            <i class="fas fa-search"></i></h3>
+        <h3>
+            <form id="busquedaForm" onsubmit="return buscarJuego(event)">
+                <input type="text" id="busqueda" placeholder="Buscar juego...">
+                <button type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </h3>
 
-        <div class="juego-lista" >
-            <!-- Bucle Thymeleaf para iterar sobre juegos -->
+
+        <div id="juego-lista" class="juego-lista">
+            <!-- Lista generada por Thymeleaf para la carga inicial -->
             <div class="juego-item" th:each="juego : ${juegos}">
                 <img th:src="${juego.imagen}" th:alt="${juego.titulo}" />
                 <h3 th:text="${juego.titulo}">Título del Juego</h3>
@@ -127,11 +134,84 @@
         }
     });
 
-    function buscarJuego() {
-        const busqueda = document.getElementById('busqueda').value.toLowerCase();
-        const juegosFiltrados = juegos.filter(juego => juego.name.toLowerCase().includes(busqueda));
-        mostrarJuegos(1, juegosFiltrados);
+   async function buscarJuego(event) {
+    event.preventDefault(); // Previene el comportamiento por defecto
+
+    const busqueda = document.getElementById('busqueda').value.toLowerCase();
+    const juegoLista = document.getElementById('juego-lista');
+
+    if (busqueda.trim() === "") {
+        alert("Por favor, escribe algo para buscar.");
+        return;
     }
+
+    try {
+        const response = await fetch(`/buscar?titulo=${encodeURIComponent(busqueda)}`);
+        if (response.ok) {
+
+            const juegosFiltrados = await response.json();
+
+            // Limpiar la lista actual
+            juegoLista.innerHTML = '';
+
+            if (juegosFiltrados.length === 0) {
+                juegoLista.innerHTML = '<p>No se encontraron juegos.</p>';
+                return;
+            }
+
+            // Agregar los resultados al DOM
+            juegosFiltrados.forEach(juego => {
+                const juegoItem = document.createElement('div');
+                juegoItem.classList.add('juego-item');
+                juegoItem.innerHTML = `
+                    <img src="${juego.imagen}" alt="${juego.titulo}">
+                    <h3>${juego.titulo}</h3>
+                    <p>Calificación: ${juego.calificacion}</p>
+                    <a href="/info?id=${juego.id}" class="btn-jugar">+info</a>
+                `;
+                if (juego.isLoggedIn) {
+                    const button = document.createElement('button');
+                    button.classList.add('btn-biblioteca');
+                    button.textContent = 'Agregar a mi biblioteca';
+                    button.setAttribute('data-id', juego.id);
+                    button.setAttribute('data-token', juego.token);
+                    button.onclick = () => addToLibrary(button);
+                    juegoItem.appendChild(button);
+                }
+                juegoLista.appendChild(juegoItem);
+            });
+        } else {
+            console.error("Error al buscar juegos:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error al buscar juegos:", error);
+    }
+}
+
+
+function mostrarJuegosFiltrados(juegosFiltrados) {
+    const juegoLista = document.querySelector('.juego-lista');
+    juegoLista.innerHTML = ''; // Limpia la lista actual
+
+    if (juegosFiltrados.length === 0) {
+        juegoLista.innerHTML = '<p>No se encontraron juegos.</p>';
+        return;
+    }
+
+    juegosFiltrados.forEach(juego => {
+        const juegoItem = document.createElement('div');
+        juegoItem.classList.add('juego-item');
+        juegoItem.innerHTML = `
+            <img src="${juego.imagen}" alt="${juego.titulo}">
+            <h3>${juego.titulo}</h3>
+            <p>Calificación: ${juego.calificacion}</p>
+            <a href="/info?id=${juego.id}" class="btn-jugar">+info</a>
+        `;
+        juegoLista.appendChild(juegoItem);
+    });
+}
+
+
 
 
     function addToLibrary(button) {

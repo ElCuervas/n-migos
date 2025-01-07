@@ -1,5 +1,6 @@
 package com.company.n_migos.controller;
 
+import com.company.n_migos.dto.JuegoResponse;
 import com.company.n_migos.entity.Juego;
 import com.company.n_migos.entity.User;
 import com.company.n_migos.service.JuegoServicio;
@@ -8,6 +9,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
@@ -25,7 +29,7 @@ import java.util.List;
 public class InicioController {
 
     @Autowired
-    private JuegoServicio servicioJuego;
+    private final JuegoServicio servicioJuego;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
@@ -44,7 +48,7 @@ public class InicioController {
 
     //controla la paginacion de el catalogo
     private void configurarPaginacion(int pagina, Model model) {
-        final int juegosPorPagina = 18;
+        final int juegosPorPagina = 15;
         List<Juego> juegos = servicioJuego.findAll();
 
         // Calcular total de páginas
@@ -88,6 +92,18 @@ public class InicioController {
             model.addAttribute("username", username);
             model.addAttribute("token", token);
         }
+    }
+
+
+
+    @GetMapping("/buscar")
+    @ResponseBody
+    public List<JuegoResponse> buscarJuegos(@RequestParam("titulo") String titulo) {
+        System.out.println("Buscando juegos con el título: " + titulo);
+        List<Juego> juegos = servicioJuego.buscarPorTitulo(titulo);
+        return juegos.stream()
+                .map(JuegoResponse::new)
+                .collect(Collectors.toList());
     }
 
 

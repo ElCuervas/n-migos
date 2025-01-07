@@ -2,6 +2,8 @@ package com.company.n_migos.repository;
 
 import com.company.n_migos.entity.Juego;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -18,4 +20,8 @@ public interface JuegoRepository extends JpaRepository<Juego, Integer> {
     @Query
     void deleteJuegoById(Integer Id);
     */
+    List<Juego> findByTituloContainingIgnoreCase(String titulo);
+
+    @Query("SELECT j FROM Juego j WHERE LOWER(j.titulo) LIKE LOWER(CONCAT('%', :titulo, '%'))")
+    List<Juego> buscarPorTitulo(@Param("titulo") String titulo);
 }
