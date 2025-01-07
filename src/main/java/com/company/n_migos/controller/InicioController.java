@@ -100,7 +100,12 @@ public class InicioController {
     @ResponseBody
     public List<JuegoResponse> buscarJuegos(@RequestParam("titulo") String titulo) {
         System.out.println("Buscando juegos con el título: " + titulo);
-        List<Juego> juegos = servicioJuego.buscarPorTitulo(titulo);
+        List<Juego> juegos;
+        if (titulo != null && !titulo.isEmpty()) {
+            juegos = servicioJuego.buscarPorTitulo(titulo);
+        } else {
+            juegos = servicioJuego.findAll();
+        }
         return juegos.stream()
                 .map(JuegoResponse::new)
                 .collect(Collectors.toList());
