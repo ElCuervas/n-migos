@@ -54,7 +54,24 @@
             <a href="/" class="btn-volver">Volver al Catálogo</a>
         </section>
     </div>
-
+    <div>
+        <section class="juegos">
+            <h2>Reseñas</h2>
+            <div th:if="${#lists.isEmpty(resenas)}">
+                <p>No hay reseñas disponibles para este juego.</p>
+            </div>
+            <div th:unless="${#lists.isEmpty(resenas)}">
+                <ul>
+                    <li th:each="resena : ${resenas}">
+                        <p><strong>Usuario:</strong> <span th:text="${resena.user.username}"></span></p>
+                        <p><strong>Puntuación:</strong> <span th:text="${resena.puntuacion}"></span></p>
+                        <p><strong>Comentario:</strong> <span th:text="${resena.texto}"></span></p>
+                        <hr>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
     <script>
         // Lista de juegos
         const juegos = [

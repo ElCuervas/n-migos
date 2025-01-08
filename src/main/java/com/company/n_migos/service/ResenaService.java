@@ -12,11 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ResenaService {
-    @Autowired
+
     private final ResenaRepository resenaRepository;
     private final UserRepository userRepository;
     private final JuegoRepository juegoRepository;
@@ -32,5 +33,8 @@ public class ResenaService {
                 .puntuacion(request.getPuntuacion())
                 .build();
         resenaRepository.save(resena);
+    }
+    public List<Resena> obtenerResenasPorJuego(Integer juegoId) {
+        return resenaRepository.findResenasByJuegoId(juegoId);
     }
 }
