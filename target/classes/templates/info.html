@@ -55,7 +55,7 @@
         </section>
     </div>
     <div>
-        <section class="juegos">
+        <section class="resena">
             <h2>Reseñas</h2>
             <div th:if="${#lists.isEmpty(resenas)}">
                 <p>No hay reseñas disponibles para este juego.</p>
@@ -73,50 +73,6 @@
         </section>
     </div>
     <script>
-        // Lista de juegos
-        const juegos = [
-            { name: 'Star Wars Outlaws', image: 'https://gaming-cdn.com/images/products/14344/616x353/star-wars-outlaws-pc-juego-ubisoft-connect-cover.jpg?v=1725519453', link: 'https://www.instant-gaming.com/es/14344-comprar-star-wars-outlaws-pc-juego-ubisoft-connect/?currency=USD&igr=zLeros' }
-        ];
-
-        const juegosPorPagina = 12;
-        let paginaActual = 1;
-
-
-        function mostrarJuegos(pagina, juegosFiltrados = juegos) {
-            const inicio = (pagina - 1) * juegosPorPagina;
-            const fin = inicio + juegosPorPagina;
-            const juegosPagina = juegosFiltrados.slice(inicio, fin);
-
-            const juegoLista = document.getElementById('juego-lista');
-            juegoLista.innerHTML = '';
-
-
-            juegosPagina.forEach(juego => {
-                const juegoItem = document.createElement('div');
-                juegoItem.classList.add('juego-item');
-                juegoItem.innerHTML = `
-                    <img src="${juego.image}" alt="${juego.name}">
-                    <h3>${juego.name}</h3>
-                    <button class="btn-biblioteca" onclick="addToLibrary('${juego.name}', '${juego.image}')">Agregar a mi biblioteca</button>
-                `;
-                juegoLista.appendChild(juegoItem);
-            });
-
-            mostrarPaginacion(pagina, juegosFiltrados);
-        }
-
-
-        mostrarJuegos(paginaActual);
-
-
-        function addToLibrary(gameName, gameImage) {
-            let library = JSON.parse(localStorage.getItem('library')) || [];
-            library.push({ name: gameName, image: gameImage });
-            localStorage.setItem('library', JSON.stringify(library));
-            alert(gameName + ' ha sido agregado a tu biblioteca!');
-        }
-
-
         function toggleMenu() {
             const submenu = document.querySelector('.submenu-usuario');
             submenu.classList.toggle('mostrar');

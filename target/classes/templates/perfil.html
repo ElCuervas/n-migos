@@ -8,35 +8,76 @@
     <style type="text/css">
         body {
             margin-top: 20px;
-            color: #1a202c;
-            text-align: left;
-            background-color: #e2e8f0;
+            color: #fff;
+            background: linear-gradient(180deg, #121212, #1a1a1a);
         }
         .main-body {
             padding: 15px;
         }
         .card {
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-            background-color: #fff;
-            border-radius: 0.25rem;
-            border: none;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
         }
         .card-body {
-            padding: 1rem;
+            color: #fff;
         }
-        .edit-mode {
-            display: none;
+        .breadcrumb {
+            background: transparent;
+            color: #fff;
+        }
+        .breadcrumb-item a {
+            color: #c0392b;
+        }
+        .breadcrumb-item.active {
+            color: #fff;
+        }
+        .btn-primary {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+        .btn-primary:hover {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+        }
+        .btn-outline-primary {
+            border-color: #c0392b;
+            color: #c0392b;
+        }
+        .btn-outline-primary:hover {
+            background-color: #c0392b;
+            color: #fff;
+        }
+        .btn-success {
+            background-color: #27ae60;
+            border-color: #27ae60;
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+        }
+        .form-control {
+            background-color: #333;
+            border: 1px solid #444;
+            color: #fff;
+        }
+        .form-control::placeholder {
+            color: #bbb;
         }
         .badge-info {
-            background-color: #3182ce;
+            background-color: #c0392b;
             color: #fff;
-            margin-right: 5px;
         }
-        .btn-primary, .btn-success, .btn-danger, .btn-outline-primary {
-            margin-right: 5px;
+        .modal-content {
+            background-color: #1a1a1a;
+            color: #fff;
+            border: 1px solid #333;
         }
-        .modal-header, .modal-body {
-            text-align: center;
+        .modal-header, .modal-footer {
+            border-color: #444;
+        }
+        ul#wishlist {
+            color: #fff;
         }
     </style>
 </head>
@@ -44,13 +85,14 @@
 <div class="container">
     <div class="main-body">
         <nav aria-label="breadcrumb" class="main-breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Mi Perfil</li>
-            </ol>
+            <div class="btn-group" role="group" aria-label="Navigation Buttons">
+                <button class="btn btn-primary mx-1" onclick="location.href='/'">Inicio</button>
+                <button class="btn btn-primary mx-1" onclick="location.href='/biblioteca'">Mi Biblioteca</button>
+                <button class="btn btn-primary mx-1" onclick="location.href='/perfil'">Mi Perfil</button>
+            </div>
         </nav>
 
-        <!-- Perfilo -->
+        <!-- Perfil -->
         <div class="row gutters-sm">
             <div class="col-md-4 mb-3">
                 <div class="card">
@@ -61,139 +103,75 @@
                                 <h4>Mi perfil</h4>
                                 <p class="text-secondary mb-1" th:text="${user.username}">nombre</p>
                                 <p class="text-muted font-size-sm" th:text="${user.pais}">Pais</p>
-                            <!--    <button class="btn btn-outline-primary btn-sm">Cambiar Foto</button> -->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Info del usuario -->
+            <!-- Información del usuario -->
             <div class="col-md-8">
                 <div class="card mb-3">
                     <div class="card-body">
-                        <div class="row mb-3">
+                        <div class="row">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Nombre Completo</h6>
                             </div>
-                            <div class="col-sm-7">
-                                <span id="name-view" class="view-mode" th:text="${user.firstname}+' '+${user.lastname}"></span>
-                            </div>
+                            <div class="col-sm-9 text-secondary" th:text="${user.firstname}+' '+${user.lastname}"></div>
                         </div>
                         <hr>
-
-                        <div class="row mb-3">
+                        <div class="row">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Correo Electrónico</h6>
                             </div>
-                            <div class="col-sm-7">
-                                <span id="email-view" class="view-mode" th:text="${user.correo}"></span>
-                            </div>
+                            <div class="col-sm-9 text-secondary" th:text="${user.correo}"></div>
                         </div>
                         <hr>
-
-                        <div class="row mb-3">
+                        <div class="row">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Teléfono</h6>
                             </div>
-                            <div class="col-sm-7">
-                                <span id="phone-view" class="view-mode" th:text="${user.celular}"></span>
-                            </div>
+                            <div class="col-sm-9 text-secondary" th:text="${user.celular}"></div>
                         </div>
                         <hr>
-
-                        <div class="row mb-3">
+                        <div class="row">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Géneros Favoritos</h6>
                             </div>
-                            <div class="col-sm-7">
-                                <span id="genres-view" class="view-mode">
-                                    <span class="badge badge-info">Action</span>
-                                    <span class="badge badge-info">RPG</span>
-                                    <span class="badge badge-info">Adventure</span>
-                                </span>
-                                <input id="genres-edit" type="text" class="form-control edit-mode" value="Action, RPG, Adventure">
-                            </div>
-                            <div class="col-sm-2 text-right">
-                                <button class="btn btn-sm btn-outline-primary toggle-edit">Editar</button>
-                                <button class="btn btn-sm btn-success edit-mode save-edit">Guardar</button>
+                            <div class="col-sm-9">
+                                <span class="badge badge-info">Action</span>
+                                <span class="badge badge-info">RPG</span>
+                                <span class="badge badge-info">Adventure</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Biblioteca -->
-                <div class="card mt-4">
+                <div class="card mt-3">
                     <div class="card-body">
                         <h5 class="card-title">Mis Juegos en Biblioteca</h5>
                         <div class="row">
-                            <div class="col-md-4" th:if=${notjuegos}>
+                            <div class="col-md-4">
                                 <div class="card">
-                                    <img src="Img\75404921007-botw.jpg" class="card-img-top" alt="Game Cover">
+                                    <img src="Img/75404921007-botw.jpg" class="card-img-top" alt="Game Cover">
                                     <div class="card-body">
                                         <h6 class="card-title">The Legend of Zelda</h6>
                                         <p class="card-text">Rating: ★★★★★</p>
-                                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#reviewModalZelda">Puntuar</button>
+                                        <button class="btn btn-primary btn-sm">Puntuar</button>
                                         <button class="btn btn-danger btn-sm">Eliminar</button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" th:unless=${notjuegos}>
-                                <div class="card" >
-                                  <p class="card-text">Sin Juegos</p>
-                                </div>
+                            <div class="col-md-4">
+                                <p class="text-secondary">Sin Juegos</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="modal fade" id="reviewModalZelda" tabindex="-1" role="dialog">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Puntuar: The Legend of Zelda</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <textarea class="form-control" rows="3" placeholder="Escribe tu reseña aquí..."></textarea>
-                                <br>
-                                <label>Puntaje:</label>
-                                <select class="form-control">
-                                    <option>1 Estrella</option>
-                                    <option>2 Estrellas</option>
-                                    <option>3 Estrellas</option>
-                                    <option>4 Estrellas</option>
-                                    <option>5 Estrellas</option>
-                                </select>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary">Guardar</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Recomendaciones -->
-              <!--  <div class="card mt-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Recomendaciones para Ti</h5>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <img src="Img\Key_Art_02_layeredjpg (1).jpg" class="card-img-top" alt="Recomendado">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Hollow Knight</h6>
-                                        <button class="btn btn-primary btn-sm">Review</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <!-- Juegos Deseados -->
-                <div class="card mt-4">
+                <!-- Lista de Deseados -->
+                <div class="card mt-3">
                     <div class="card-body">
                         <h5 class="card-title">Mi Lista de Deseados</h5>
                         <ul class="list-group" id="wishlist">
@@ -210,10 +188,7 @@
     </div>
 </div>
 
-<!-- JS -->
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-</script>
 </body>
 </html>
