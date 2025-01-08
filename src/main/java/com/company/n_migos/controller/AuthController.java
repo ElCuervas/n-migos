@@ -41,20 +41,16 @@ public class AuthController {
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         AuthResponse authResponse = authService.login(request);
-
-        // Crear una cookie
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", authResponse.getToken())
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
-                .maxAge(7 * 24 * 60 * 60) // 7 días
+                .maxAge(7 * 24 * 60 * 60)
                 .build();
-
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .build();
     }
-
     @PostMapping("/auth/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         ResponseCookie clearJwtCookie = ResponseCookie.from("jwt", "")
@@ -67,33 +63,6 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, clearJwtCookie.toString())
                 .body("Sesión cerrada correctamente");
-    }
-
-    @PostMapping("/auth/refresh")
-    public ResponseEntity<?> refreshAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
-        if (refreshToken == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        String username = jwtService.getUsernameFromToken(refreshToken);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-        if (!jwtService.isTokenValid(refreshToken, userDetails)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        String newAccessToken = jwtService.getToken(userDetails);
-
-        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", newAccessToken)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(15 * 60)
-                .build();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
-                .build();
     }
 
     @PostMapping(value = "register")

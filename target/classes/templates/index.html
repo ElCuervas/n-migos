@@ -109,7 +109,6 @@
                 <a th:href="@{/info(id=${juego.id})}" class="btn-jugar">+info</a>
                 <button th:if="${isLoggedIn}" class="btn-biblioteca"
                         th:data-id="${juego.id}"
-                        th:data-token="${token}"
                         onclick="addToLibrary(this)">
                     Agregar a mi biblioteca
                 </button>
@@ -198,7 +197,6 @@
                         button.classList.add('btn-biblioteca');
                         button.textContent = 'Agregar a mi biblioteca';
                         button.setAttribute('data-id', juego.id);
-                        button.setAttribute('data-token', juego.token);
                         button.onclick = () => addToLibrary(button);
                         juegoItem.appendChild(button);
                     }
@@ -337,18 +335,11 @@ document.getElementById('borrar-filtros').addEventListener('click', async () => 
 
     function addToLibrary(button) {
         const gameId = button.getAttribute('data-id'); // Obtén el ID del juego
-        const token = button.getAttribute('data-token'); // Obtén el token desde el atributo data-token
-
-        if (!token) {
-            alert("No estás autenticado. Por favor, inicia sesión.");
-            return;
-        }
 
         fetch(`/biblioteca/${gameId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Incluye el token en el encabezado
             },
         })
             .then(response => {

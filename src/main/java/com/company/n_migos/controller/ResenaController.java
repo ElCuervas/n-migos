@@ -25,21 +25,8 @@ public class ResenaController {
     private final UserDetailsService userDetailsService;
     @PostMapping("/resena-create")
     public ResponseEntity<String> CrearResena(HttpServletRequest request, @RequestBody ResenaResponse requestRes) {
-        String username = null;
-        String token = null;
-        Integer UserId=null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    username = jwtService.getUsernameFromToken(token);
-                    User user = (User) userDetailsService.loadUserByUsername(username);
-                    UserId=user.getId();
-                }
-            }
-        }
-        System.out.println("Si");
+        User user = userService.FindUser(request);
+        Integer UserId= user.getId();
         resenaService.CrearResena(UserId,requestRes);
         return ResponseEntity.ok("OK");
     }

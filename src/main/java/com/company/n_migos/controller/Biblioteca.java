@@ -48,12 +48,8 @@ public class Biblioteca {
         return "biblioteca";
     }
     @PostMapping("/{juegoId}")
-    public ResponseEntity<?> addJuegoBiblioteca(@RequestHeader("Authorization") String token, @PathVariable Integer juegoId) {
-
-        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
-        String username = jwtService.getUsernameFromToken(jwt);
-        User user = (User) userDetailsService.loadUserByUsername(username);
-
+    public ResponseEntity<?> addJuegoBiblioteca(HttpServletRequest request, @PathVariable Integer juegoId) {
+        User user = userService.FindUser(request);
         userService.addJuegoBiblioteca(user, juegoId);
 
         return ResponseEntity.ok("Juego agregado a tu biblioteca");

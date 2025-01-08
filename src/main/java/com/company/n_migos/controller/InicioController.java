@@ -8,6 +8,7 @@ import com.company.n_migos.repository.GeneroRepository;
 import com.company.n_migos.service.GeneroServicio;
 import com.company.n_migos.service.JuegoServicio;
 import com.company.n_migos.service.JwtService;
+import com.company.n_migos.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class InicioController {
     private final JuegoServicio servicioJuego;
     private final GeneroServicio generoServicio;
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
     @GetMapping
     public String listarTodosLosJuegos(@RequestParam(name = "pagina", defaultValue = "1") String paginaStr, Model model, HttpServletRequest request) {
@@ -66,7 +67,6 @@ public class InicioController {
         int fin = Math.min(inicio + juegosPorPagina, totalJuegos);
         List<Juego> juegosPagina = juegos.subList(inicio, fin); // Filtra los juegos para la página actual
 
-        // Agregar juegos y datos de paginación al modelo
         model.addAttribute("juegos", juegosPagina);
         model.addAttribute("paginaActual", pagina);
         model.addAttribute("totalPaginas", totalPaginas);
@@ -76,22 +76,11 @@ public class InicioController {
     private void configurarEstadoUsuario(Model model, HttpServletRequest request) {
         boolean isLoggedIn = false;
         String username = null;
-        String token = null;
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    try {
-                        username = jwtService.getUsernameFromToken(token);
-                        isLoggedIn = true;
-                    } catch (Exception e) {
-                        isLoggedIn = false;
-                    }
-                    break;
-                }
-            }
+        String token = userService.FindUserToken(request);
+        if (token != null) {
+            User user = userService.FindUser(request);
+            username= user.getUsername();
+            isLoggedIn=true;
         }
         model.addAttribute("isLoggedIn", isLoggedIn);
         if (isLoggedIn) {

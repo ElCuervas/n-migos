@@ -22,10 +22,8 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -48,7 +46,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
 
-
             final String token = getTokenFromRequest(request);
             final String username;
 
@@ -62,7 +59,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (username!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
                 UserDetails userDetails=userDetailsService.loadUserByUsername(username);
-
                 if (jwtService.isTokenValid(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken= new UsernamePasswordAuthenticationToken(
                             userDetails,
@@ -74,15 +70,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     System.out.println("Autenticación configurada para el usuario: " + username);
                 }
-
             }
-
             filterChain.doFilter(request, response);
         } catch (AuthenticationException e) {
             response.sendRedirect("/");
         }
     }
-
     private String getTokenFromRequest(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

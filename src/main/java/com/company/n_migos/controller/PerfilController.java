@@ -26,19 +26,8 @@ public class PerfilController {
 
     @GetMapping
     public String getPerfilPage(Model model,  HttpServletRequest request) {
-        String username = null;
-        String token = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    username = jwtService.getUsernameFromToken(token);
-                }
-            }
-        }
-        User user = (User) userDetailsService.loadUserByUsername(username);
-        List<Juego> juegos = userService.getBibliotecaByUsername(username);
+        User user = userService.FindUser(request);
+        List<Juego> juegos = userService.getBibliotecaByUsername(user.getUsername());
         if(!juegos.isEmpty()){
             model.addAttribute("juegos", juegos);
             model.addAttribute("notjuegos", true);
