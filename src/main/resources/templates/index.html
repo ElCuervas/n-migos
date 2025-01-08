@@ -11,7 +11,7 @@
 </head>
 
 <body class="Catalogo">
-    <div class="navbar">
+<div class="navbar">
 
     <div class="menu-container">
         <input type="checkbox" id="toggle-menu" class="toggle-menu">
@@ -59,19 +59,51 @@
 
 <div>
     <section class="juegos">
-        <h2>Juegos Disponibles  </h2>
-        <h3>
-            <form id="busquedaForm" onsubmit="return buscarJuego(event)">
+
+        <!-- Buscador de juegos -->
+        <h3 class="busqueda-container">
+
+            <form id="busquedaForm"  onsubmit="return buscarJuego(event)">
                 <input type="text" id="busqueda" placeholder="Buscar juego...">
-                <button type="submit">
+                <button type="submit" class="submit-button">
                     <i class="fas fa-search"></i>
                 </button>
             </form>
+
+            <!-- Botón de filtros -->
+            <div class="filtros-container">
+                <button id="filtro-genero">Filtrar por Género</button>
+                <button id="filtro-puntuacion">Filtrar por Puntuación</button>
+            </div>
+
+            <!-- Filtros aplicados -->
+            <div id="filtros-aplicados" style="margin-top: 10px;">
+                <h4>Filtros aplicados:</h4>
+                <p id="lista-filtros">Ninguno</p>
+                <button id="borrar-filtros" style="display: none;">Borrar filtros</button>
+            </div>
+
+
         </h3>
 
+        <!-- Ventana emergente para géneros -->
+        <div id="popup-generos" class="popup" style="display: none;">
+            <div class="popup-content">
+                <h3>Selecciona un Género</h3>
+                <ul id="lista-generos">
+                    <li th:each="genero : ${generos}" th:text="${genero.nombre}"
+                        th:data-nombre="${genero.nombre}"
+                        onclick="seleccionarGenero(this)"></li>
+                </ul>
+                <button id="cerrarPopup" class="cerrarPopup">Aplicar</button>
+            </div>
+        </div>
+
+
+        <h2>Juegos Disponibles  </h2>
 
         <div id="juego-lista" class="juego-lista">
-            <!-- Lista generada por Thymeleaf para la carga inicial -->
+            <!-- Lista generada por Thymeleaf para la carga inicial de juegos -->
             <div class="juego-item" th:each="juego : ${juegos}">
                 <img th:src="${juego.imagen}" th:alt="${juego.titulo}" />
                 <h3 th:text="${juego.titulo}">Título del Juego</h3>
@@ -119,7 +151,6 @@
                         method: 'POST',
                         credentials: 'include',
                     });
-
                     if (response.ok) {
                         alert('Sesión cerrada correctamente');
                         window.location.href = '/'; // Redirige al inicio
@@ -134,79 +165,176 @@
         }
     });
 
-   async function buscarJuego(event) {
-    event.preventDefault(); // Previene el comportamiento por defecto
+    async function buscarJuego(event) {
+        event.preventDefault(); // Previene el comportamiento por defecto
 
-    const busqueda = document.getElementById('busqueda').value.toLowerCase();
-    const juegoLista = document.getElementById('juego-lista');
+        const busqueda = document.getElementById('busqueda').value.toLowerCase();
+        const juegoLista = document.getElementById('juego-lista');
 
-    try {
-        const response = await fetch(`/buscar?titulo=${encodeURIComponent(busqueda)}`);
-        if (response.ok) {
+        try {
+            const response = await fetch(`/buscar?titulo=${encodeURIComponent(busqueda)}`);
+            if (response.ok) {
+                const juegosFiltrados = await response.json();
 
-            const juegosFiltrados = await response.json();
 
-            // Limpiar la lista actual
-            juegoLista.innerHTML = '';
+                // Limpiar la lista actual
+                juegoLista.innerHTML = '';
 
-            if (juegosFiltrados.length === 0) {
-                juegoLista.innerHTML = '<p>No se encontraron juegos.</p>';
-                return;
-            }
-
-            // Agregar los resultados al DOM
-            juegosFiltrados.forEach(juego => {
-                const juegoItem = document.createElement('div');
-                juegoItem.classList.add('juego-item');
-                juegoItem.innerHTML = `
-                    <img src="${juego.imagen}" alt="${juego.titulo}">
-                    <h3>${juego.titulo}</h3>
-                    <p>Calificación: ${juego.calificacion}</p>
-                    <a href="/info?id=${juego.id}" class="btn-jugar">+info</a>
-                `;
-                if (juego.isLoggedIn) {
-                    const button = document.createElement('button');
-                    button.classList.add('btn-biblioteca');
-                    button.textContent = 'Agregar a mi biblioteca';
-                    button.setAttribute('data-id', juego.id);
-                    button.setAttribute('data-token', juego.token);
-                    button.onclick = () => addToLibrary(button);
-                    juegoItem.appendChild(button);
+                if (juegosFiltrados.length === 0) {
+                    juegoLista.innerHTML = '<p>No se encontraron juegos.</p>';
+                    return;
                 }
-                juegoLista.appendChild(juegoItem);
+
+                // Agregar los resultados al DOM
+                juegosFiltrados.forEach(juego => {
+                    const juegoItem = document.createElement('div');
+                    juegoItem.classList.add('juego-item');
+                    juegoItem.innerHTML = `
+                        <img src="${juego.imagen}" alt="${juego.titulo}">
+                        <h3>${juego.titulo}</h3>
+                        <p>Calificación: ${juego.calificacion}</p>
+                        <a href="/info?id=${juego.id}" class="btn-jugar">+info</a>
+                    `;
+                    if (juego.isLoggedIn) {
+                        const button = document.createElement('button');
+                        button.classList.add('btn-biblioteca');
+                        button.textContent = 'Agregar a mi biblioteca';
+                        button.setAttribute('data-id', juego.id);
+                        button.setAttribute('data-token', juego.token);
+                        button.onclick = () => addToLibrary(button);
+                        juegoItem.appendChild(button);
+                    }
+                    juegoLista.appendChild(juegoItem);
+                });
+            } else {
+                console.error("Error al buscar juegos:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error al buscar juegos:", error);
+        }
+    }
+
+    function mostrarJuegosFiltrados(juegosFiltrados) {
+        const juegoLista = document.querySelector('.juego-lista');
+        juegoLista.innerHTML = ''; // Limpia la lista actual
+
+        if (juegosFiltrados.length === 0) {
+            juegoLista.innerHTML = '<p>No se encontraron juegos.</p>';
+            return;
+        }
+
+        juegosFiltrados.forEach(juego => {
+            const juegoItem = document.createElement('div');
+            juegoItem.classList.add('juego-item');
+            juegoItem.innerHTML = `
+                <img src="${juego.imagen}" alt="${juego.titulo}">
+                <h3>${juego.titulo}</h3>
+                <p>Calificación: ${juego.calificacion}</p>
+                <a href="/info?id=${juego.id}" class="btn-jugar">+info</a>
+            `;
+            juegoLista.appendChild(juegoItem);
+        });
+    }
+let generosSeleccionados = []; // Lista de géneros seleccionados
+
+// Mostrar ventana emergente de géneros
+document.getElementById('filtro-genero').addEventListener('click', async () => {
+    const popupGeneros = document.getElementById('popup-generos');
+    const listaGeneros = document.getElementById('lista-generos');
+
+    // Cargar los géneros desde el servidor
+    try {
+        const response = await fetch('/generos');
+        if (response.ok) {
+            const generos = await response.json();
+            listaGeneros.innerHTML = ''; // Limpia la lista de géneros
+            generos.forEach(genero => {
+                const li = document.createElement('li');
+                li.textContent = genero.nombre; // Muestra el nombre del género
+                li.style.cursor = 'pointer'; // Cambia el cursor al pasar por encima
+                li.addEventListener('click', () => {
+                    if (generosSeleccionados.includes(genero.nombre)) {
+                        // Si ya está seleccionado, lo eliminamos
+                        generosSeleccionados = generosSeleccionados.filter(
+                            g => g !== genero.nombre
+                        );
+                        li.style.backgroundColor = ''; // Restablece el fondo
+                    } else {
+                        // Si no está seleccionado, lo añadimos
+                        generosSeleccionados.push(genero.nombre);
+                        li.style.backgroundColor = '#444'; // Resalta la selección
+                    }
+                    console.log("Géneros seleccionados:", generosSeleccionados);
+                    actualizarFiltrosAplicados(); // Actualiza la lista de filtros
+                });
+                listaGeneros.appendChild(li); // Añade el género a la lista
             });
         } else {
-            console.error("Error al buscar juegos:", response.statusText);
+            console.error("Error al cargar los géneros:", response.statusText);
         }
     } catch (error) {
-        console.error("Error al buscar juegos:", error);
+        console.error("Error al cargar los géneros:", error);
+    }
+
+    // Mostrar el popup
+    popupGeneros.style.display = 'flex';
+});
+
+// Cerrar la ventana emergente y aplicar filtros
+document.getElementById('cerrarPopup').addEventListener('click', async () => {
+    const popupGeneros = document.getElementById('popup-generos');
+    popupGeneros.style.display = 'none';
+
+    // Aplicar los filtros
+    if (generosSeleccionados.length > 0) {
+        try {
+
+            console.log("buscando juegos")
+            const response = await fetch(`/filtrar?generos=${encodeURIComponent(generosSeleccionados.join(','))}`);
+            if (response.ok) {
+                const juegos = await response.json();
+                mostrarJuegosFiltrados(juegos); // Actualiza el catálogo con los juegos filtrados
+            }
+        } catch (error) {
+            console.error("Error al aplicar el filtro:", error);
+        }
+    } else {
+        console.log("No hay géneros seleccionados.");
+    }
+});
+
+// Actualizar los filtros aplicados y mostrar/ocultar el botón de borrar filtros
+function actualizarFiltrosAplicados() {
+    const contenedorFiltros = document.getElementById('lista-filtros');
+    const botonBorrarFiltros = document.getElementById('borrar-filtros');
+
+    if (generosSeleccionados.length > 0) {
+        contenedorFiltros.textContent = generosSeleccionados.join(', ');
+        botonBorrarFiltros.style.display = 'inline-block'; // Mostrar el botón
+    } else {
+        contenedorFiltros.textContent = 'Ninguno';
+        botonBorrarFiltros.style.display = 'none'; // Ocultar el botón
     }
 }
 
+// Restablecer filtros al hacer clic en "Borrar filtros"
+document.getElementById('borrar-filtros').addEventListener('click', async () => {
+    generosSeleccionados = []; // Vaciar los filtros seleccionados
+    actualizarFiltrosAplicados(); // Actualizar la lista de filtros aplicados
 
-function mostrarJuegosFiltrados(juegosFiltrados) {
-    const juegoLista = document.querySelector('.juego-lista');
-    juegoLista.innerHTML = ''; // Limpia la lista actual
-
-    if (juegosFiltrados.length === 0) {
-        juegoLista.innerHTML = '<p>No se encontraron juegos.</p>';
-        return;
+    // Restablecer el catálogo a todos los juegos
+    try {
+        const response = await fetch('/juegos'); // Supón que esta ruta devuelve todos los juegos
+        if (response.ok) {
+            const juegos = await response.json();
+            mostrarJuegosFiltrados(juegos); // Actualiza el catálogo con todos los juegos
+        } else {
+            console.error("Error al cargar todos los juegos:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error al cargar todos los juegos:", error);
     }
-
-    juegosFiltrados.forEach(juego => {
-        const juegoItem = document.createElement('div');
-        juegoItem.classList.add('juego-item');
-        juegoItem.innerHTML = `
-            <img src="${juego.imagen}" alt="${juego.titulo}">
-            <h3>${juego.titulo}</h3>
-            <p>Calificación: ${juego.calificacion}</p>
-            <a href="/info?id=${juego.id}" class="btn-jugar">+info</a>
-        `;
-        juegoLista.appendChild(juegoItem);
-    });
-}
-
-
+});
 
 
     function addToLibrary(button) {
@@ -236,6 +364,7 @@ function mostrarJuegosFiltrados(juegosFiltrados) {
                 console.error("Error al agregar el juego a la biblioteca:", error);
             });
     }
+
     function toggleMenu() {
         const submenu = document.querySelector('.submenu-usuario');
         submenu.classList.toggle('mostrar');

@@ -45,4 +45,10 @@ public class JuegoServicio {
     public List<Juego> buscarPorTitulo(String titulo) {
         return juegoRepository.findByTituloContainingIgnoreCase(titulo);
     }
+
+    public List<Juego> buscarPorGeneros(List<String> generos) {
+        return juegoRepository.findByGenerosNombreIn(generos, generos.size());
+    }
+
+
 }

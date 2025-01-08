@@ -1,5 +1,6 @@
 package com.company.n_migos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,4 +44,12 @@ public class Juego implements Serializable {
     @OneToMany(mappedBy = "juego", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Resena> resenas = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "generos_juego",
+            joinColumns = @JoinColumn(name = "juego_id"),
+            inverseJoinColumns = @JoinColumn(name = "genero_nombre")
+    )
+    @JsonIgnore
+    private List<Genero> generos;
 }

@@ -11,4 +11,11 @@ import java.util.List;
 @Repository
 public interface JuegoRepository extends JpaRepository<Juego, Integer> {
     List<Juego> findByTituloContainingIgnoreCase(String titulo);
+
+    @Query("SELECT j FROM Juego j WHERE LOWER(j.titulo) LIKE LOWER(CONCAT('%', :titulo, '%'))")
+    List<Juego> buscarPorTitulo(@Param("titulo") String titulo);
+
+    @Query("SELECT DISTINCT j FROM Juego j JOIN j.generos g WHERE g.nombre IN :generos GROUP BY j HAVING COUNT(DISTINCT g.nombre) = :cantidad")
+    List<Juego> findByGenerosNombreIn(@Param("generos") List<String> generos, @Param("cantidad") int cantidad);
+
 }
