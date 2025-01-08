@@ -355,7 +355,7 @@ document.getElementById('borrar-filtros').addEventListener('click', async () => 
                 if (response.ok) {
                     alert("El juego ha sido agregado a tu biblioteca!");
                 } else {
-                    alert("No se pudo agregar el juego a la biblioteca. Por favor, verifica tu sesión.");
+                    alert("El juego ya está en la biblioteca del usuario!");
                 }
             })
             .catch(error => {

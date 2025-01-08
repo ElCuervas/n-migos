@@ -8,7 +8,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -34,8 +36,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/","/buscar","/generos","/filtrar","/juegos","/info","/auth/**", "/login","/register", "/js/**", "/css/**", "/img/**").permitAll()
-                                .requestMatchers("/**").permitAll()
                                 .anyRequest().authenticated()
+                )
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .accessDeniedHandler(accessDeniedHandler())
+                                .authenticationEntryPoint(authenticationEntryPoint())
                 )
                 .sessionManagement(sessionManager->
                         sessionManager
@@ -56,5 +62,16 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.sendRedirect("/"); // Redirigir a la raíz cuando se produzca un Access Denied
+        };
+    }
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return (request, response, authException) -> {
+            response.sendRedirect("/"); // Redirige a la raíz si el usuario no está autenticado (401)
+        };
+    }
 }

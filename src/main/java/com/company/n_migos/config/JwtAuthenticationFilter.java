@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.company.n_migos.service.JwtService;
 import jakarta.servlet.http.Cookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,54 +29,58 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String requestPath = request.getRequestURI();
+        try {
+            String requestPath = request.getRequestURI();
 
-        if (requestPath.equals("/")
-                || requestPath.startsWith("/buscar")
-                || requestPath.startsWith("/generos")
-                || requestPath.startsWith("/filtrar")
-                || requestPath.startsWith("/juegos")
-                || requestPath.startsWith("/info")
-                || requestPath.startsWith("/login")
-                || requestPath.startsWith("/auth")
-                || requestPath.startsWith("/register")
-                || requestPath.startsWith("/css/")
-                || requestPath.startsWith("/img/")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-
-
-        final String token = getTokenFromRequest(request);
-        final String username;
-
-        if (token==null)
-        {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        username=jwtService.getUsernameFromToken(token);
-
-        if (username!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
-            UserDetails userDetails=userDetailsService.loadUserByUsername(username);
-
-            if (jwtService.isTokenValid(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken= new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                        null,
-                    userDetails.getAuthorities());
-
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-                System.out.println("Autenticación configurada para el usuario: " + username);
+            if (requestPath.equals("/")
+                    || requestPath.startsWith("/buscar")
+                    || requestPath.startsWith("/generos")
+                    || requestPath.startsWith("/filtrar")
+                    || requestPath.startsWith("/juegos")
+                    || requestPath.startsWith("/info")
+                    || requestPath.startsWith("/login")
+                    || requestPath.startsWith("/auth")
+                    || requestPath.startsWith("/register")
+                    || requestPath.startsWith("/css/")
+                    || requestPath.startsWith("/img/")) {
+                filterChain.doFilter(request, response);
+                return;
             }
 
+
+
+            final String token = getTokenFromRequest(request);
+            final String username;
+
+            if (token==null)
+            {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            username=jwtService.getUsernameFromToken(token);
+
+            if (username!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
+                UserDetails userDetails=userDetailsService.loadUserByUsername(username);
+
+                if (jwtService.isTokenValid(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken= new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
+
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    System.out.println("Autenticación configurada para el usuario: " + username);
+                }
+
+            }
+
+            filterChain.doFilter(request, response);
+        } catch (AuthenticationException e) {
+            response.sendRedirect("/");
         }
-        
-        filterChain.doFilter(request, response);
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {

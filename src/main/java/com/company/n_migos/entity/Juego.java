@@ -38,6 +38,9 @@ public class Juego implements Serializable {
     @Column(name="calificacion")
     private Float calificacion;
 
+    @Column(name = "desarrolladores", length = 100)
+    private String desarrolladores;
+
     @ManyToMany(mappedBy = "biblioteca")
     private List<User> users;
 
