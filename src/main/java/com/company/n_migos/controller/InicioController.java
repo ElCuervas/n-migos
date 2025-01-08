@@ -94,8 +94,6 @@ public class InicioController {
         }
     }
 
-
-
     @GetMapping("/buscar")
     @ResponseBody
     public List<JuegoResponse> buscarJuegos(@RequestParam("titulo") String titulo) {

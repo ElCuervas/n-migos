@@ -7,11 +7,11 @@ import com.company.n_migos.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,5 +46,16 @@ public class Biblioteca {
             System.out.println("Sin juegos");
         }
         return "biblioteca";
+    }
+    @PostMapping("/{juegoId}")
+    public ResponseEntity<?> addJuegoBiblioteca(@RequestHeader("Authorization") String token, @PathVariable Integer juegoId) {
+
+        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
+        String username = jwtService.getUsernameFromToken(jwt);
+        User user = (User) userDetailsService.loadUserByUsername(username);
+
+        userService.addJuegoBiblioteca(user, juegoId);
+
+        return ResponseEntity.ok("Juego agregado a tu biblioteca");
     }
 }
