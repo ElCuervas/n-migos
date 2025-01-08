@@ -33,8 +33,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authRequest ->
                         authRequest
-                                .requestMatchers("/","/buscar","/info","/auth/**", "/login","/register", "/js/**", "/css/**", "/img/**").permitAll()
-                                .requestMatchers("/**").permitAll() //cambio para permitir la paginacion de el catalogo
+                                .requestMatchers("/","/buscar","/generos","/filtrar","/juegos","/info","/auth/**", "/login","/register", "/js/**", "/css/**", "/img/**").permitAll()
+                                .requestMatchers("/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager->

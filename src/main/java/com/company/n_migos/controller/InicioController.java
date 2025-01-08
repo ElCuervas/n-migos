@@ -1,8 +1,11 @@
 package com.company.n_migos.controller;
 
 import com.company.n_migos.dto.JuegoResponse;
+import com.company.n_migos.entity.Genero;
 import com.company.n_migos.entity.Juego;
 import com.company.n_migos.entity.User;
+import com.company.n_migos.repository.GeneroRepository;
+import com.company.n_migos.service.GeneroServicio;
 import com.company.n_migos.service.JuegoServicio;
 import com.company.n_migos.service.JwtService;
 import jakarta.servlet.http.Cookie;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import java.sql.ClientInfoStatus;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +35,7 @@ public class InicioController {
 
     @Autowired
     private final JuegoServicio servicioJuego;
+    private final GeneroServicio generoServicio;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
@@ -101,6 +107,30 @@ public class InicioController {
     public List<JuegoResponse> buscarJuegos(@RequestParam("titulo") String titulo) {
         System.out.println("Buscando juegos con el título: " + titulo);
         List<Juego> juegos = servicioJuego.buscarPorTitulo(titulo);
+        return juegos.stream()
+                .map(JuegoResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/generos")
+    @ResponseBody
+    public List<Genero> obtenerGeneros() {
+        return generoServicio.findAll();
+    }
+
+    @GetMapping("/filtrar")
+    @ResponseBody
+    public List<JuegoResponse> filtrarJuegos(@RequestParam("generos") String generos) {
+        List<String> listaGeneros = Arrays.asList(generos.split(","));
+        List<Juego> juegos = servicioJuego.buscarPorGeneros(listaGeneros);
+        return juegos.stream().map(JuegoResponse::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/juegos")
+    @ResponseBody
+    public List<JuegoResponse> obtenerCatalogoCompleto(){
+        System.out.println("obtendiendo catalogo");
+        List<Juego> juegos = servicioJuego.findAll();
         return juegos.stream()
                 .map(JuegoResponse::new)
                 .collect(Collectors.toList());
