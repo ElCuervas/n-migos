@@ -26,7 +26,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtService jwtService;
-    private final UserService UserService;
     private final UserDetailsService userDetailsService;
 
     @GetMapping("/login")
@@ -102,15 +101,4 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(request));
     }
 
-    @PostMapping("/biblioteca/{juegoId}")
-    public ResponseEntity<?> addJuegoBiblioteca(@RequestHeader("Authorization") String token, @PathVariable Integer juegoId) {
-
-        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
-        String username = jwtService.getUsernameFromToken(jwt);
-        User user = (User) userDetailsService.loadUserByUsername(username);
-
-        UserService.addJuegoBiblioteca(user, juegoId);
-
-        return ResponseEntity.ok("Juego agregado a tu biblioteca");
-    }
 }

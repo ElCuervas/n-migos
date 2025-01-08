@@ -174,8 +174,8 @@
         try {
             const response = await fetch(`/buscar?titulo=${encodeURIComponent(busqueda)}`);
             if (response.ok) {
-
                 const juegosFiltrados = await response.json();
+
 
                 // Limpiar la lista actual
                 juegoLista.innerHTML = '';

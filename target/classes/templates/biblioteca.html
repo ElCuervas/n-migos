@@ -5,183 +5,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Biblioteca</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/biblioteca.css">
 </head>
-<body class="Catalogo">
-    <div class="navbar">
-
-        <div class="menu-container">
-            <input type="checkbox" id="toggle-menu" class="toggle-menu">
-            <label for="toggle-menu" class="menu-icon">☰ Menú</label>
-
-            <nav class="menu">
+<body class="Biblioteca">
+<div class="navbar">
+    <div class="menu-container">
+        <input type="checkbox" id="toggle-menu" class="toggle-menu">
+        <label for="toggle-menu" class="menu-icon">☰ Menú</label>
+        <nav class="menu">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/perfil">Mi Perfil</a></li>
+                <li><a href="biblioteca">Mi Biblioteca</a></li>
+                <li><a href="#">Noticias</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="boton-derecha">
+        <div class="usuario-menu">
+            <button class="btn-icon" onclick="toggleMenu()">
+                <i class="fas fa-user"></i>
+            </button>
+            <div class="submenu-usuario">
                 <ul>
-                    <li><a href="/">Inicio</a></li>
-                    <li><a href="/perfil">Mi Perfil</a></li>
-                    <li><a href="biblioteca">Mi Biblioteca</a></li>
-                    <li><a href="#">Noticias</a></li>
+                    <li>
+                        <a id="logoutButton" href="javascript:void(0)">Cerrar sesión</a>
+                    </li>
                 </ul>
-            </nav>
-        </div>
-
-
-        <div class="boton-derecha">
-            <div class="usuario-menu">
-                <button class="btn-icon" onclick="toggleMenu()">
-                    <i class="fas fa-user"></i>
-                </button>
-                <div class="submenu-usuario">
-                    <ul>
-                        <li>
-                            <a id="logoutButton" href="javascript:void(0)">Cerrar sesión</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <section class="biblioteca">
-        <h2>Mi Biblioteca</h2>
-        <div class="juego-lista" th:if="${notjuegos}">
-            <!-- Bucle Thymeleaf para iterar sobre juegos -->
-            <div class="juego-item" th:each="juego : ${juegos}">
-                <img th:src="${juego.imagen}" th:alt="${juego.titulo}" />
-                <h3 th:text="${juego.titulo}">Título del Juego</h3>
-                <a th:href="@{/info(id=${juego.id})}" class="btn-jugar">+info</a>
+<section class="biblioteca">
+    <h2>Mi Biblioteca</h2>
+    <div class="juego-lista" th:if="${notjuegos}">
+        <div class="juego-item" th:each="juego : ${juegos}">
+            <img th:src="${juego.imagen}" th:alt="${juego.titulo}" />
+            <h3 th:text="${juego.titulo}">Título del Juego</h3>
+            <a th:href="@{/info(id=${juego.id})}" class="btn-jugar">+info</a>
+            <button class="btn-biblioteca" th:data-id="${juego.id}" th:data-title="${juego.titulo}" onclick="openReviewModal(this)">
+                Puntuar
+            </button>
+        </div>
+    </div>
+    <div class="juego-lista" th:unless="${notjuegos}">
+        <p>No tiene juegos en su Biblioteca</p>
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal-custom" id="reviewModal" style="display: none;">
+    <div class="modal-dialog-custom">
+        <div class="modal-content-custom">
+            <div class="modal-header-custom">
+                <h5 class="modal-title-custom">Puntuar: <span id="modalGameTitle"></span></h5>
+                <button type="button" class="close-custom" onclick="closeReviewModal()">&times;</button>
+            </div>
+            <div class="modal-body-custom">
+                <textarea id="reviewText" class="form-control-custom" rows="3" placeholder="Escribe tu reseña aquí..."></textarea>
+                <br>
+                <label for="reviewScore">Puntaje:</label>
+                <select id="reviewScore" class="form-control-custom">
+                    <option value="1.0">1 Estrella</option>
+                    <option value="2.0">2 Estrellas</option>
+                    <option value="3.0">3 Estrellas</option>
+                    <option value="4.0">4 Estrellas</option>
+                    <option value="5.0">5 Estrellas</option>
+                </select>
+            </div>
+            <div class="modal-footer-custom">
+                <button class="btn-primary-custom" onclick="saveReview()">Guardar</button>
+                <button class="btn-secondary-custom" onclick="closeReviewModal()">Cancelar</button>
             </div>
         </div>
-        <div class="juego-lista" th:unless="${notjuegos}">
-          <p>No tiene juegos en su Biblioteca</p>
-        </div>
-    </section>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const logoutButton = document.getElementById('logoutButton');
-        if (logoutButton) {
-            logoutButton.addEventListener('click', async () => {
-                try {
-                    const response = await fetch('/auth/logout', {
-                        method: 'POST',
-                        credentials: 'include',
-                    });
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include',
+                });
 
-                    if (response.ok) {
-                        alert('Sesión cerrada correctamente');
-                        window.location.href = '/'; // Redirige al inicio
-                    } else {
-                        alert('Error al cerrar sesión');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('No se pudo cerrar la sesión');
-                }
-            });
-        }
-    });
-    const juegosPorPagina = 12;
-    let paginaActual = 1;
-
-    function mostrarJuegos(pagina, juegosFiltrados = juegos) {
-        const inicio = (pagina - 1) * juegosPorPagina;
-        const fin = inicio + juegosPorPagina;
-        const juegosPagina = juegosFiltrados.slice(inicio, fin);
-
-        const juegoLista = document.getElementById('juego-lista');
-        juegoLista.innerHTML = '';
-
-        juegosPagina.forEach(juego => {
-            const juegoItem = document.createElement('div');
-            juegoItem.classList.add('juego-item');
-            juegoItem.innerHTML = `
-                <img src="${juego.image}" alt="${juego.name}">
-                <h3>${juego.name}</h3>
-                <a href="${juego.link}" class="btn-jugar">+info</a>
-                ${buttonHTML}
-            `;
-            juegoLista.appendChild(juegoItem);
-        });
-
-        mostrarPaginacion(pagina, juegosFiltrados);
-    }
-
-
-
-    function mostrarPaginacion(pagina, juegosFiltrados) {
-        const totalPaginas = Math.ceil(juegosFiltrados.length / juegosPorPagina);
-        const paginacion = document.getElementById('pagination');
-        paginacion.innerHTML = '';
-
-
-        if (pagina > 1) {
-            const botonAnterior = document.createElement('button');
-            botonAnterior.textContent = 'Anterior';
-            botonAnterior.onclick = () => mostrarJuegos(pagina - 1, juegosFiltrados);
-            paginacion.appendChild(botonAnterior);
-        }
-
-
-        for (let i = 1; i <= totalPaginas; i++) {
-            const botonPagina = document.createElement('button');
-            botonPagina.textContent = i;
-            if (i === pagina) {
-                botonPagina.disabled = true;
-            }
-            botonPagina.onclick = () => mostrarJuegos(i, juegosFiltrados);
-            paginacion.appendChild(botonPagina);
-        }
-
-
-        if (pagina < totalPaginas) {
-            const botonSiguiente = document.createElement('button');
-            botonSiguiente.textContent = 'Siguiente';
-            botonSiguiente.onclick = () => mostrarJuegos(pagina + 1, juegosFiltrados);
-            paginacion.appendChild(botonSiguiente);
-        }
-    }
-
-
-    function buscarJuego() {
-        const busqueda = document.getElementById('busqueda').value.toLowerCase();
-        const juegosFiltrados = juegos.filter(juego => juego.name.toLowerCase().includes(busqueda));
-        mostrarJuegos(1, juegosFiltrados);
-    }
-
-
-    mostrarJuegos(paginaActual);
-
-
-    function addToLibrary(button) {
-        const gameId = button.getAttribute('data-id'); // Obtén el ID del juego
-        const token = button.getAttribute('data-token'); // Obtén el token desde el atributo data-token
-
-        if (!token) {
-            alert("No estás autenticado. Por favor, inicia sesión.");
-            return;
-        }
-
-        fetch(`/biblioteca/${gameId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Incluye el token en el encabezado
-            },
-        })
-            .then(response => {
                 if (response.ok) {
-                    alert("El juego ha sido agregado a tu biblioteca!");
+                    alert('Sesión cerrada correctamente');
+                    window.location.href = '/'; // Redirige al inicio
                 } else {
-                    alert("No se pudo agregar el juego a la biblioteca. Por favor, verifica tu sesión.");
+                    alert('Error al cerrar sesión');
                 }
-            })
-            .catch(error => {
-                console.error("Error al agregar el juego a la biblioteca:", error);
-            });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('No se pudo cerrar la sesión');
+            }
+        });
     }
+});
     function toggleMenu() {
         const submenu = document.querySelector('.submenu-usuario');
         submenu.classList.toggle('mostrar');
     }
+
+let selectedGameId = null;
+
+function openReviewModal(button) {
+    selectedGameId = button.getAttribute('data-id');
+    const gameTitle = button.getAttribute('data-title');
+    document.getElementById('modalGameTitle').textContent = gameTitle;
+    document.getElementById('reviewModal').style.display = 'flex';
+}
+
+function closeReviewModal() {
+    document.getElementById('reviewModal').style.display = 'none';
+}
+
+async function saveReview() {
+    const userData = {
+        juego: selectedGameId, // Usamos la variable global definida en openReviewModal
+        texto: document.getElementById('reviewText').value,
+        puntuacion: parseFloat(document.getElementById('reviewScore').value),
+    };
+
+    try {
+        // Realizar la solicitud POST al backend
+        const response = await fetch('/resena-create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData), // Enviar el JSON al backend
+        });
+
+        if (response.ok) {
+            alert('Reseña guardada exitosamente!');
+            closeReviewModal();
+        } else {
+            alert('Error al guardar la reseña.');
+        }
+    } catch (error) {
+        console.error('Error al guardar la reseña:', error);
+    }
+}
+
 </script>
 </body>
 </html>

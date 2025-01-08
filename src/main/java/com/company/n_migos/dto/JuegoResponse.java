@@ -12,7 +12,6 @@ public class JuegoResponse {
     private Date lanzamiento;
     private String imagen;
     private Float calificacion;
-
     public JuegoResponse(Juego juego) {
         this.id = juego.getId();
         this.titulo = juego.getTitulo();
