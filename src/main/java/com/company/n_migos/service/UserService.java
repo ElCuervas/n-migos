@@ -61,4 +61,17 @@ public class UserService {
         }
         return token;
     }
+
+    public void updateUserProfile(String username, User updatedUser) {
+        User existingUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario no fue encontrado."));
+
+        existingUser.setFirstname(updatedUser.getFirstname());
+        existingUser.setLastname(updatedUser.getLastname());
+        existingUser.setCorreo(updatedUser.getCorreo());
+        existingUser.setCelular(updatedUser.getCelular());
+
+        userRepository.save(existingUser);
+    }
+
 }
