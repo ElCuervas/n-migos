@@ -357,13 +357,36 @@ body {
     background-color: #b90606;
     font-size: 15px;
     transition: all 0.3s;
+    border-radius: 5px;
     border: none;
 }
+
 .cerrarPopup:hover {
+    border-radius: 5px;
     transition: all 0.3s;
     background-color: #5c0202;
     border: none;
 }
+
+.boton-filtro-condicional {
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.boton-filtro-condicional:hover {
+    background-color: #555;
+}
+
+.boton-seleccionado {
+    background-color: #ff9900; /* Cambia a un color destacado */
+    color: #000;
+}
+
 
 #borrar-filtros {
     background-color: #dc3545;
@@ -377,4 +400,20 @@ body {
 
 #borrar-filtros:hover {
     background-color: #c82333;
+}
+
+.estrellas-container {
+    margin: 10px 0;
+    gap: 5px;
+    align-items: center;
+}
+
+.estrella {
+    font-size: 30px;
+    color: gray;
+    cursor: pointer;
+}
+
+.estrella.selected {
+    color: gold;
 }

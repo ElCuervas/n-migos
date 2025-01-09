@@ -128,5 +128,36 @@ public class InicioController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/filtrarPuntuacion")
+    @ResponseBody
+    public List<JuegoResponse> filtrarPorPuntuacion(
+            @RequestParam("tipo") String tipo,
+            @RequestParam("puntuacion") Float puntuacion
+    ) {
+        List<Juego> juegos;
+        if ("mayor".equals(tipo)) {
+            juegos = servicioJuego.buscarPuntuacionMayorQue(puntuacion);
+        } else if ("menor".equals(tipo)) {
+            juegos = servicioJuego.buscarPuntuacionMenorQue(puntuacion);
+        } else {
+            throw new IllegalArgumentException("Tipo de filtro no válido: " + tipo);
+        }
+        return juegos.stream().map(JuegoResponse::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/filtrarCombinado")
+    @ResponseBody
+    public List<JuegoResponse> filtrarCombinado(
+            @RequestParam(value = "generos", required = false) String generos,
+            @RequestParam(value = "tipo", required = false) String tipo,
+            @RequestParam(value = "puntuacion", required = false) Float puntuacion
+    ) {
+        System.out.println(puntuacion);
+        List<String> listaGeneros = generos != null ? Arrays.asList(generos.split(",")) : null;
+        List<Juego> juegos = servicioJuego.filtrarCombinado(listaGeneros, tipo, puntuacion);
+        return juegos.stream().map(JuegoResponse::new).collect(Collectors.toList());
+    }
+
+
 
 }
