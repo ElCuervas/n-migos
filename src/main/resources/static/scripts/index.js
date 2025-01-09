@@ -224,7 +224,6 @@ async function aplicarFiltros(pagina = 1) {
 }
 
 
-
 function actualizarFiltrosAplicados() {
     const contenedorFiltros = document.getElementById('lista-filtros');
     const botonBorrarFiltros = document.getElementById('borrar-filtros');
@@ -267,6 +266,10 @@ document.getElementById('borrar-filtros').addEventListener('click', async () => 
     }
 });
 
+
+// -------------------------- PAGINACION -------------------------- //
+
+
 function mostrarPaginacion(totalPaginas, paginaActual) {
     const paginacionContainer = document.getElementById('pagination');
     paginacionContainer.innerHTML = ''; // Limpiar paginación previa
@@ -282,7 +285,7 @@ function mostrarPaginacion(totalPaginas, paginaActual) {
         for (let i = 1; i <= totalPaginas; i++) {
             const boton = document.createElement('button');
             boton.textContent = i;
-            boton.className = i === paginaActual ? 'active' : '';
+            boton.className = i === paginaActual ? 'active-page' : '';
             boton.onclick = () => aplicarFiltros(i);
             paginacionContainer.appendChild(boton);
         }

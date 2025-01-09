@@ -134,7 +134,7 @@
             </div>
         </div>
 
-        <!-- paginacion de juegos -->
+        <!-- Paginación de juegos -->
         <div id="pagination" class="pagination">
             <button th:if="${paginaActual > 1}"
                     th:onclick="'location.href=\'/?pagina=' + (${paginaActual} - 1) + '\''">
@@ -142,17 +142,17 @@
             </button>
 
             <button th:each="i : ${#numbers.sequence(1, totalPaginas)}"
-                    th:classappend="${i == paginaActual} ? 'active' : ''"
+                    th:classappend="${i == paginaActual} ? 'active-page' : ''"
                     th:onclick="'location.href=\'/?pagina=' + ${i} + '\''"
                     th:text="${i}">
             </button>
-
 
             <button th:if="${paginaActual < totalPaginas}"
                     th:onclick="'location.href=\'/?pagina=' + (${paginaActual} + 1) + '\''">
                 Siguiente
             </button>
         </div>
+
 
     </section>
 </div>

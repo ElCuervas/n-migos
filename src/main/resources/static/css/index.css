@@ -6,6 +6,8 @@ body {
     color: rgb(221, 217, 217);
 }
 
+/* ------------- ESTILOS DE LA CABECERA ------------- */
+
 .anuncio {
     text-align: center;
 }
@@ -157,6 +159,7 @@ body {
     }
 }
 
+/* ------------- ESTILOS DE LOS JUEGOS ------------- */
 
 .juegos {
     padding: 20px;
@@ -228,7 +231,7 @@ body {
     background-color: #45a049;
 }
 
-
+/* ------------- ESTILOS DE LA PAGINACION ------------- */
 .pagination {
     text-align: center;
     margin-top: 20px;
@@ -242,6 +245,7 @@ body {
     color: white;
     border: none;
     border-radius: 5px;
+    transition: background-color 0.3s ease;
 }
 
 .pagination button:hover {
@@ -253,11 +257,21 @@ body {
     cursor: not-allowed;
 }
 
+.pagination .active-page {
+    background-color: #ff9900; /* Cambia a un color destacado */
+    color: #000;
+    font-weight: bold;
+    border: 2px solid #000;
+}
+
+
 .busqueda-container {
     align-content: center;
     margin-bottom: 20px;
 
 }
+
+/* ------------- ESTILOS DE LA BUSQUEDA ------------- */
 
 .busqueda-container input {
     padding: 8px;
@@ -286,6 +300,8 @@ body {
     transform: scale(1.1);
 }
 
+/* ------------- ESTILOS DE LOS FILTROS ------------- */
+
 .filtros-container {
     align-items: center;
     justify-content: flex-start;
@@ -308,6 +324,7 @@ body {
     background-color: #b90606;
 }
 
+/* ------------- ESTILOS DE LAS VENTANAS EMERGENTES ------------- */
 
 .popup {
     position: fixed;
@@ -387,21 +404,6 @@ body {
     color: #000;
 }
 
-
-#borrar-filtros {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-#borrar-filtros:hover {
-    background-color: #c82333;
-}
-
 .estrellas-container {
     margin: 10px 0;
     gap: 5px;
@@ -416,4 +418,19 @@ body {
 
 .estrella.selected {
     color: gold;
+}
+/* --------- ESTILO DE BOTON BORRAR FILTRO --------- */
+
+#borrar-filtros {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#borrar-filtros:hover {
+    background-color: #c82333;
 }
