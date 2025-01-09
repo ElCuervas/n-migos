@@ -1,30 +1,22 @@
 package com.company.n_migos.controller;
 
 import com.company.n_migos.dto.JuegoResponse;
+import com.company.n_migos.dto.PaginaResponse;
 import com.company.n_migos.entity.Genero;
 import com.company.n_migos.entity.Juego;
 import com.company.n_migos.entity.User;
-import com.company.n_migos.repository.GeneroRepository;
 import com.company.n_migos.service.GeneroServicio;
 import com.company.n_migos.service.JuegoServicio;
 import com.company.n_migos.service.JwtService;
 import com.company.n_migos.service.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-
-import java.sql.ClientInfoStatus;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,29 +40,44 @@ public class InicioController {
         } catch (NumberFormatException e) {
             pagina = 1; // en caso de error
         }
-        configurarPaginacion(pagina, model);
+
+        // Obtener la lista de juegos completa
+        List<Juego> juegos = servicioJuego.findAll();
+
+        System.out.println("Juegos encontrados: " + juegos.size());
+
+        // Calcular la paginación
+        PaginaResponse paginaResponse = calcularPaginacion(juegos, pagina, 18);
+
+        System.out.println("Página actual: " + paginaResponse.getPaginaActual() + ", Total páginas: " + paginaResponse.getTotalPaginas());
+
+        // Agregar los atributos al modelo
+        model.addAttribute("juegos", paginaResponse.getJuegos());
+        model.addAttribute("paginaActual", paginaResponse.getPaginaActual());
+        model.addAttribute("totalPaginas", paginaResponse.getTotalPaginas());
+
         configurarEstadoUsuario(model, request);
         return "index";
     }
 
-    //controla la paginacion de el catalogo
-    private void configurarPaginacion(int pagina, Model model) {
-        final int juegosPorPagina = 15;
-        List<Juego> juegos = servicioJuego.findAll();
 
-        // Calcular total de páginas
+    // Método para calcular la paginación
+    private PaginaResponse calcularPaginacion(List<Juego> juegos, int pagina, int juegosPorPagina) {
         int totalJuegos = juegos.size();
         int totalPaginas = (int) Math.ceil((double) totalJuegos / juegosPorPagina);
 
-        // Calcular inicio y fin para sublista
         int inicio = (pagina - 1) * juegosPorPagina;
         int fin = Math.min(inicio + juegosPorPagina, totalJuegos);
-        List<Juego> juegosPagina = juegos.subList(inicio, fin); // Filtra los juegos para la página actual
+        List<Juego> juegosPagina = juegos.subList(inicio, fin); // Juegos para la página actual
 
-        model.addAttribute("juegos", juegosPagina);
-        model.addAttribute("paginaActual", pagina);
-        model.addAttribute("totalPaginas", totalPaginas);
+        // Retornar la respuesta de la paginación
+        return new PaginaResponse(
+                juegosPagina.stream().map(JuegoResponse::new).collect(Collectors.toList()),
+                totalPaginas,
+                pagina
+        );
     }
+
 
     //controla el estado del usuario para permitir accesos a otros servicios
     private void configurarEstadoUsuario(Model model, HttpServletRequest request) {
@@ -91,18 +98,15 @@ public class InicioController {
 
     @GetMapping("/buscar")
     @ResponseBody
-    public List<JuegoResponse> buscarJuegos(@RequestParam("titulo") String titulo) {
-        System.out.println("Buscando juegos con el título: " + titulo);
-        List<Juego> juegos;
-        if (titulo != null && !titulo.isEmpty()) {
-            juegos = servicioJuego.buscarPorTitulo(titulo);
-        } else {
-            juegos = servicioJuego.findAll();
-        }
-        return juegos.stream()
-                .map(JuegoResponse::new)
-                .collect(Collectors.toList());
+    public ResponseEntity<?> buscarJuegos(@RequestParam("titulo") String titulo) {
+        List<Juego> juegos = servicioJuego.buscarPorTitulo(titulo);
+        return ResponseEntity.ok(
+                juegos.stream()
+                        .map(JuegoResponse::new)
+                        .collect(Collectors.toList())
+        );
     }
+
 
     @GetMapping("/generos")
     @ResponseBody
@@ -112,51 +116,53 @@ public class InicioController {
 
     @GetMapping("/filtrar")
     @ResponseBody
-    public List<JuegoResponse> filtrarJuegos(@RequestParam("generos") String generos) {
-        List<String> listaGeneros = Arrays.asList(generos.split(","));
-        List<Juego> juegos = servicioJuego.buscarPorGeneros(listaGeneros);
-        return juegos.stream().map(JuegoResponse::new).collect(Collectors.toList());
+    public ResponseEntity<?> filtrarCombinado(
+            @RequestParam(value = "generos", required = false) String generos,
+            @RequestParam(value = "tipo", required = false) String tipo,
+            @RequestParam(value = "puntuacion", required = false) String puntuacionStr,
+            @RequestParam(value = "pagina", defaultValue = "1") int pagina
+    ) {
+        System.out.println("Filtros aplicados: " + generos + ", " + tipo + ", " + puntuacionStr);
+        Float puntuacion = null;
+        try {
+            puntuacion = puntuacionStr != null ? Float.parseFloat(puntuacionStr) : null;
+        } catch (NumberFormatException e) {
+            System.out.println("Puntuación inválida: " + puntuacionStr);
+        }
+
+        // Obtener los juegos filtrados
+        List<String> listaGeneros = generos != null ? Arrays.asList(generos.split(",")) : null;
+        List<Juego> juegos = servicioJuego.filtro(listaGeneros, tipo, puntuacion);
+
+        // Calcular la paginación
+        PaginaResponse paginaResponse = calcularPaginacion(juegos, pagina, 18);
+        return ResponseEntity.ok().body(paginaResponse);
     }
+
+
 
     @GetMapping("/juegos")
     @ResponseBody
-    public List<JuegoResponse> obtenerCatalogoCompleto(){
-        System.out.println("obtendiendo catalogo");
+    public ResponseEntity<?> obtenerCatalogoCompleto(
+            @RequestParam(value = "pagina", defaultValue = "1") int pagina
+    ){
+        final int juegosPorPagina = 18;
         List<Juego> juegos = servicioJuego.findAll();
-        return juegos.stream()
-                .map(JuegoResponse::new)
-                .collect(Collectors.toList());
+
+        int totalJuegos = juegos.size();
+        int totalPaginas = (int) Math.ceil((double) totalJuegos / juegosPorPagina);
+
+        int inicio = (pagina - 1) * juegosPorPagina;
+        int fin = Math.min(inicio + juegosPorPagina, totalJuegos);
+        List<Juego> juegosPagina = juegos.subList(inicio, fin);
+
+        return ResponseEntity.ok().body(new PaginaResponse(
+                juegosPagina.stream().map(JuegoResponse::new).collect(Collectors.toList()),
+                totalPaginas,
+                pagina
+        ));
     }
 
-    @GetMapping("/filtrarPuntuacion")
-    @ResponseBody
-    public List<JuegoResponse> filtrarPorPuntuacion(
-            @RequestParam("tipo") String tipo,
-            @RequestParam("puntuacion") Float puntuacion
-    ) {
-        List<Juego> juegos;
-        if ("mayor".equals(tipo)) {
-            juegos = servicioJuego.buscarPuntuacionMayorQue(puntuacion);
-        } else if ("menor".equals(tipo)) {
-            juegos = servicioJuego.buscarPuntuacionMenorQue(puntuacion);
-        } else {
-            throw new IllegalArgumentException("Tipo de filtro no válido: " + tipo);
-        }
-        return juegos.stream().map(JuegoResponse::new).collect(Collectors.toList());
-    }
-
-    @GetMapping("/filtrarCombinado")
-    @ResponseBody
-    public List<JuegoResponse> filtrarCombinado(
-            @RequestParam(value = "generos", required = false) String generos,
-            @RequestParam(value = "tipo", required = false) String tipo,
-            @RequestParam(value = "puntuacion", required = false) Float puntuacion
-    ) {
-        System.out.println(puntuacion);
-        List<String> listaGeneros = generos != null ? Arrays.asList(generos.split(",")) : null;
-        List<Juego> juegos = servicioJuego.filtrarCombinado(listaGeneros, tipo, puntuacion);
-        return juegos.stream().map(JuegoResponse::new).collect(Collectors.toList());
-    }
 
 
 

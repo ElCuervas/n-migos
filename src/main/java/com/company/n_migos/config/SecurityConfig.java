@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authRequest ->
                         authRequest
-                                .requestMatchers("/", "/buscar","/generos","/filtrar","/filtrarPuntuacion","/filtrarCombinado","/juegos","/info","/auth/**", "/login","/register", "/scripts/**", "/css/**", "/img/**").permitAll()
+                                .requestMatchers("/", "/buscar","/generos","/filtrar","/juegos","/info","/auth/**", "/login","/register", "/scripts/**", "/css/**", "/img/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling ->
