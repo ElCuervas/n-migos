@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,15 +28,7 @@ public class Juego implements Serializable {
     private String titulo;
 
     @Column(name="lanzamiento")
-    private Date lanzamiento;
-
-    // Método PrePersist para asignar un valor predeterminado si no se proporciona
-    @PrePersist
-    public void establecerLanzamientoPorDefecto() {
-        if (this.lanzamiento == null) {
-            this.lanzamiento = java.sql.Date.valueOf("2000-01-01");
-        }
-    }
+    private LocalDateTime lanzamiento;
 
     @Column(name="imagen")
     private String imagen;

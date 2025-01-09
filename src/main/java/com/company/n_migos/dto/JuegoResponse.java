@@ -3,13 +3,14 @@ package com.company.n_migos.dto;
 import com.company.n_migos.entity.Juego;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
 public class JuegoResponse {
     private Integer id;
     private String titulo;
-    private Date lanzamiento;
+    private LocalDateTime lanzamiento;
     private String imagen;
     private Float calificacion;
     public JuegoResponse(Juego juego) {
