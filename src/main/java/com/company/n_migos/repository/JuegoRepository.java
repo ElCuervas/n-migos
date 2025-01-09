@@ -18,4 +18,21 @@ public interface JuegoRepository extends JpaRepository<Juego, Integer> {
     @Query("SELECT DISTINCT j FROM Juego j JOIN j.generos g WHERE g.nombre IN :generos GROUP BY j HAVING COUNT(DISTINCT g.nombre) = :cantidad")
     List<Juego> findByGenerosNombreIn(@Param("generos") List<String> generos, @Param("cantidad") int cantidad);
 
+    List<Juego> findByCalificacionGreaterThan(Float calificacion);
+
+    List<Juego> findByCalificacionLessThan(Float calificacion);
+
+    @Query("SELECT DISTINCT j FROM Juego j " +
+            "LEFT JOIN j.generos g " +
+            "WHERE (:generos IS NULL OR g.nombre IN :generos) " +
+            "AND (:tipo IS NULL OR " +
+            "(CASE WHEN :tipo = 'mayor' THEN j.calificacion > :puntuacion ELSE j.calificacion < :puntuacion END)) " +
+            "GROUP BY j.id " +
+            "HAVING COUNT(DISTINCT g.nombre) = :cantidad OR :generos IS NULL")
+    List<Juego> findByGenerosYPuntuacion(
+            @Param("generos") List<String> generos,
+            @Param("cantidad") int cantidad,
+            @Param("tipo") String tipo,
+            @Param("puntuacion") Float puntuacion
+    );
 }
