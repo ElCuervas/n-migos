@@ -23,6 +23,9 @@ public class ResenaService {
     private final JuegoRepository juegoRepository;
 
     public void CrearResena(Integer userID, ResenaResponse request){
+        if (resenaRepository.findByUserIdAndJuegoId(userID, request.getJuego()).isPresent()) {
+            throw new IllegalArgumentException("El usuario ya ha creado una reseña para este juego.");
+        }
         Resena resena = Resena.builder()
                 .user(userRepository.findById(userID)
                         .orElseThrow(() -> new RuntimeException("Usuario no encontrado")))

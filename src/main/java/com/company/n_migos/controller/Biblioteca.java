@@ -7,6 +7,7 @@ import com.company.n_migos.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
@@ -50,8 +51,11 @@ public class Biblioteca {
     @PostMapping("/{juegoId}")
     public ResponseEntity<?> addJuegoBiblioteca(HttpServletRequest request, @PathVariable Integer juegoId) {
         User user = userService.FindUser(request);
-        userService.addJuegoBiblioteca(user, juegoId);
-
-        return ResponseEntity.ok("Juego agregado a tu biblioteca");
+        try {
+            userService.addJuegoBiblioteca(user, juegoId);
+            return ResponseEntity.ok("El juego ha sido agregado a la biblioteca.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("El juego ya está en la biblioteca del usuario.");
+        }
     }
 }
