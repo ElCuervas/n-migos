@@ -23,9 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // -------------------------- BUSQUEDA DE JUEGOS -------------------------- //
+
+
 async function buscarJuego(event) {
     event.preventDefault();
-    const busqueda = document.getElementById('busqueda').value.toLowerCase();
+
+    const busqueda = document.getElementById('busqueda').value.trim().toLowerCase();
+
+    if (busqueda === "") {
+        aplicarFiltros(1);
+        return;
+    }
+
     const juegoLista = document.getElementById('juego-lista');
 
     try {
@@ -40,6 +49,7 @@ async function buscarJuego(event) {
         console.error("Error al buscar juegos:", error);
     }
 }
+
 
 function mostrarJuegosFiltrados(juegosFiltrados) {
     const juegoLista = document.querySelector('.juego-lista');
@@ -64,6 +74,8 @@ function mostrarJuegosFiltrados(juegosFiltrados) {
 }
 
 // -------------------------- FILTRO POR GENEROS -------------------------- //
+
+
 let generosSeleccionados = [];
 
 document.getElementById('filtro-genero').addEventListener('click', async () => {
@@ -183,27 +195,34 @@ document.getElementById('cerrarPopupPuntuacion').addEventListener('click', () =>
 // -------------------------- APLICACION DE FILTROS -------------------------- //
 
 
-async function aplicarFiltros() {
-    const generos = generosSeleccionados.length > 0 ? generosSeleccionados.join(',') : null;
+async function aplicarFiltros(pagina = 1) {
+    const generos = generosSeleccionados.join(',');
     const tipoFiltro = filtroTipo;
     const puntuacion = puntuacionSeleccionada;
 
-    console.log("filtros aplicados: ",generos, tipoFiltro, puntuacion )
+    // Construir la URL con los parámetros existentes
+    let url = `/filtrar?pagina=${pagina}`;
+    if (generos) {
+        url += `&generos=${encodeURIComponent(generos)}`;
+    }
+    if (tipoFiltro && puntuacion) {
+        url += `&tipo=${tipoFiltro}&puntuacion=${puntuacion}`;
+    }
 
     try {
-        const response = await fetch(`/filtrarCombinado?generos=${encodeURIComponent(generos || '')}&tipo=${tipoFiltro || ''}&puntuacion=${puntuacion || ''}`);
-        console.log(puntuacion);
+        console.log("URL generada para filtros:", url);
+        const response = await fetch(url);
         if (response.ok) {
-            const juegos = await response.json();
-            mostrarJuegosFiltrados(juegos);
+            const data = await response.json();
+            mostrarJuegosFiltrados(data.juegos);
+            mostrarPaginacion(data.totalPaginas, data.paginaActual);
             actualizarFiltrosAplicados();
-        } else {
-            console.error("Error al aplicar filtros combinados:", response.statusText);
         }
     } catch (error) {
         console.error("Error al aplicar filtros combinados:", error);
     }
 }
+
 
 
 function actualizarFiltrosAplicados() {
@@ -235,10 +254,11 @@ document.getElementById('borrar-filtros').addEventListener('click', async () => 
     actualizarFiltrosAplicados();
 
     try {
-        const response = await fetch('/juegos');
+        const response = await fetch('/juegos?pagina=1');
         if (response.ok) {
-            const juegos = await response.json();
-            mostrarJuegosFiltrados(juegos);
+            const data = await response.json();
+            mostrarJuegosFiltrados(data.juegos);
+            mostrarPaginacion(data.totalPaginas, data.paginaActual);
         } else {
             console.error("Error al cargar todos los juegos:", response.statusText);
         }
@@ -246,6 +266,35 @@ document.getElementById('borrar-filtros').addEventListener('click', async () => 
         console.error("Error al cargar todos los juegos:", error);
     }
 });
+
+function mostrarPaginacion(totalPaginas, paginaActual) {
+    const paginacionContainer = document.getElementById('pagination');
+    paginacionContainer.innerHTML = ''; // Limpiar paginación previa
+
+    if (totalPaginas > 1) {
+        if (paginaActual > 1) {
+            const botonAnterior = document.createElement('button');
+            botonAnterior.textContent = 'Anterior';
+            botonAnterior.onclick = () => aplicarFiltros(paginaActual - 1);
+            paginacionContainer.appendChild(botonAnterior);
+        }
+
+        for (let i = 1; i <= totalPaginas; i++) {
+            const boton = document.createElement('button');
+            boton.textContent = i;
+            boton.className = i === paginaActual ? 'active' : '';
+            boton.onclick = () => aplicarFiltros(i);
+            paginacionContainer.appendChild(boton);
+        }
+
+        if (paginaActual < totalPaginas) {
+            const botonSiguiente = document.createElement('button');
+            botonSiguiente.textContent = 'Siguiente';
+            botonSiguiente.onclick = () => aplicarFiltros(paginaActual + 1);
+            paginacionContainer.appendChild(botonSiguiente);
+        }
+    }
+}
 
 // -------------------------- AÑADIR A BIBLIOTECA -------------------------- //
 function addToLibrary(button) {

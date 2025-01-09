@@ -58,13 +58,13 @@ public class JuegoServicio {
         return juegoRepository.findByCalificacionLessThan(puntuacion);
     }
 
-    public List<Juego> filtrarCombinado(List<String> generos, String tipo, Float puntuacion) {
+    public List<Juego> filtro(List<String> generos, String tipo, Float puntuacion) {
 
         System.out.println();
         System.out.println("Filtros seleccionados: " + generos + ", " + tipo + " " + puntuacion);
 
-        // Verifica si la lista esta vacia
-        boolean tieneGeneros = !generos.get(0).equals("");
+        // Verifica si la lista esta vacia (puede ser cambiado dependiendo los requerimientos de la solicitud)
+        boolean tieneGeneros = generos!=null;
 
         if (tieneGeneros && tipo != null && puntuacion != null) {
             System.out.println("Filtro conjunto"); // Filtro combinado por géneros y puntuación
