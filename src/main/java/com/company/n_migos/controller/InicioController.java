@@ -51,7 +51,6 @@ public class InicioController {
 
         // Obtener la lista de juegos completa
         List<Juego> juegos = servicioJuego.findAll();
-
         System.out.println("Juegos encontrados: " + juegos.size());
 
         // Calcular la paginación
@@ -170,7 +169,6 @@ public class InicioController {
                 pagina
         ));
     }
-
 
 
 

@@ -1,6 +1,8 @@
 package com.company.n_migos.service;
 
 import com.company.n_migos.entity.Juego;
+import com.company.n_migos.entity.Resena;
+import com.company.n_migos.entity.User;
 import com.company.n_migos.repository.JuegoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.util.Optional;
 public class JuegoServicio {
 
     private final JuegoRepository juegoRepository;
+    private final ResenaService resenaService;
 
     public List<Juego> findAll() {
         return juegoRepository.findAll();
@@ -27,17 +30,22 @@ public class JuegoServicio {
     }
 
 
-    public void updateJuego(Integer Id, Juego juego) {
+    public void updateJuegoCalificacion(Integer Id) {
+        List<Resena> resenas = resenaService.obtenerResenasPorJuego(Id);
+        float calificacion = 0;
+        if (resenas != null && !resenas.isEmpty()) {
+            float sumaCalificaciones = 0;
+            for (Resena resena : resenas) {
+                sumaCalificaciones += resena.getPuntuacion();
+            }
+            calificacion = sumaCalificaciones / resenas.size();
+            calificacion = Math.round(calificacion * 10) / 10f;
+        }
         Juego juegoBd = findById(Id).orElseThrow(() ->
                 new IllegalArgumentException("Juego con id " + Id + " no encontrado"));
-        juegoBd.setTitulo(juego.getTitulo());
-        juegoBd.setCalificacion(juego.getCalificacion());
-        juegoBd.setImagen(juego.getImagen());
-        juegoBd.setSinapsis(juego.getSinapsis());
-        juegoBd.setLanzamiento(juego.getLanzamiento());
+        juegoBd.setCalificacion(calificacion);
         juegoRepository.save(juegoBd);
     }
-
     public void deleteJuegoById(Integer Id) {
         juegoRepository.deleteById(Id);
     }

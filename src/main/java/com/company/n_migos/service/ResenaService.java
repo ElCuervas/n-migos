@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -38,6 +39,7 @@ public class ResenaService {
         resenaRepository.save(resena);
     }
     public List<Resena> obtenerResenasPorJuego(Integer juegoId) {
-        return resenaRepository.findResenasByJuegoId(juegoId);
+        List<Resena> resenas = resenaRepository.findResenasByJuegoId(juegoId);
+        return (resenas != null && !resenas.isEmpty()) ? resenas : null;
     }
 }
