@@ -29,10 +29,18 @@ public class Juego implements Serializable {
     @Column(name="lanzamiento")
     private Date lanzamiento;
 
+    // Método PrePersist para asignar un valor predeterminado si no se proporciona
+    @PrePersist
+    public void establecerLanzamientoPorDefecto() {
+        if (this.lanzamiento == null) {
+            this.lanzamiento = java.sql.Date.valueOf("2000-01-01");
+        }
+    }
+
     @Column(name="imagen")
     private String imagen;
 
-    @Column(name="sinapsis", length = 3000)
+    @Column(name="sinapsis", length = 10000)
     private String sinapsis;
 
     @Column(name="calificacion")
