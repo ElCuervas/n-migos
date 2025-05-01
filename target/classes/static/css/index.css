@@ -232,12 +232,18 @@ body {
 }
 
 /* ------------- ESTILOS DE LA PAGINACION ------------- */
-.pagination {
-    text-align: center;
-    margin-top: 20px;
+.pagination .pagination-elipsis {
+    padding: 10px 15px;
+    margin: 0 5px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    cursor: default;
+    font-size: 1em;
 }
 
-.pagination button {
+.pagination button,
+.pagination span {
     padding: 10px 15px;
     margin: 0 5px;
     cursor: pointer;
@@ -248,30 +254,31 @@ body {
     transition: background-color 0.3s ease;
 }
 
+.pagination span {
+    cursor: default;
+    background-color: transparent;
+    color: white;
+    border: none;
+}
+
 .pagination button:hover {
     background-color: #45a049;
 }
 
-.pagination button:disabled {
-    background-color: #d3d3d3;
-    cursor: not-allowed;
-}
-
 .pagination .active-page {
-    background-color: #ff9900; /* Cambia a un color destacado */
+    background-color: #ff9900;
     color: #000;
     font-weight: bold;
     border: 2px solid #000;
 }
 
+/* ------------- ESTILOS DE LA BUSQUEDA ------------- */
+
 
 .busqueda-container {
     align-content: center;
     margin-bottom: 20px;
-
 }
-
-/* ------------- ESTILOS DE LA BUSQUEDA ------------- */
 
 .busqueda-container input {
     padding: 8px;

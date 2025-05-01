@@ -269,20 +269,24 @@ document.getElementById('borrar-filtros').addEventListener('click', async () => 
 
 // -------------------------- PAGINACION -------------------------- //
 
-
 function mostrarPaginacion(totalPaginas, paginaActual) {
     const paginacionContainer = document.getElementById('pagination');
-    paginacionContainer.innerHTML = ''; // Limpiar paginación previa
+    paginacionContainer.innerHTML = ''; // Limpiar la paginación previa
 
+    const maxBotones = 11; // Máximo de botones visibles
+    const halfRange = Math.floor((maxBotones - 3) / 2); // Ajustar para elipsis y extremos
+
+    // Agregar botón "Anterior"
+    if (paginaActual > 1) {
+        const botonAnterior = document.createElement('button');
+        botonAnterior.textContent = '«';
+        botonAnterior.onclick = () => aplicarFiltros(paginaActual - 1);
+        paginacionContainer.appendChild(botonAnterior);
+    }
+
+    // Mostrar siempre las primeras páginas (1 y 2)
     if (totalPaginas > 1) {
-        if (paginaActual > 1) {
-            const botonAnterior = document.createElement('button');
-            botonAnterior.textContent = 'Anterior';
-            botonAnterior.onclick = () => aplicarFiltros(paginaActual - 1);
-            paginacionContainer.appendChild(botonAnterior);
-        }
-
-        for (let i = 1; i <= totalPaginas; i++) {
+        for (let i = 1; i <= Math.min(2, totalPaginas); i++) {
             const boton = document.createElement('button');
             boton.textContent = i;
             boton.className = i === paginaActual ? 'active-page' : '';
@@ -290,14 +294,53 @@ function mostrarPaginacion(totalPaginas, paginaActual) {
             paginacionContainer.appendChild(boton);
         }
 
-        if (paginaActual < totalPaginas) {
-            const botonSiguiente = document.createElement('button');
-            botonSiguiente.textContent = 'Siguiente';
-            botonSiguiente.onclick = () => aplicarFiltros(paginaActual + 1);
-            paginacionContainer.appendChild(botonSiguiente);
+        // Mostrar elipsis si necesario
+        if (paginaActual > halfRange + 3 && totalPaginas > maxBotones) {
+            const elipsis = document.createElement('span');
+            elipsis.textContent = '...';
+            elipsis.className = 'pagination-elipsis';
+            paginacionContainer.appendChild(elipsis);
+        }
+
+        // Rango dinámico de páginas alrededor de la página actual
+        const startPage = Math.max(3, paginaActual - halfRange);
+        const endPage = Math.min(totalPaginas - 2, paginaActual + halfRange);
+        for (let i = startPage; i <= endPage; i++) {
+            const boton = document.createElement('button');
+            boton.textContent = i;
+            boton.className = i === paginaActual ? 'active-page' : '';
+            boton.onclick = () => aplicarFiltros(i);
+            paginacionContainer.appendChild(boton);
+        }
+
+        // Mostrar elipsis antes de las últimas páginas si necesario
+        if (paginaActual < totalPaginas - halfRange - 2 && totalPaginas > maxBotones) {
+            const elipsis = document.createElement('span');
+            elipsis.textContent = '...';
+            elipsis.className = 'pagination-elipsis';
+            paginacionContainer.appendChild(elipsis);
+        }
+
+        // Mostrar siempre las últimas páginas
+        for (let i = Math.max(totalPaginas - 1, 3); i <= totalPaginas; i++) {
+            const boton = document.createElement('button');
+            boton.textContent = i;
+            boton.className = i === paginaActual ? 'active-page' : '';
+            boton.onclick = () => aplicarFiltros(i);
+            paginacionContainer.appendChild(boton);
         }
     }
+
+    // Agregar botón "Siguiente"
+    if (paginaActual < totalPaginas) {
+        const botonSiguiente = document.createElement('button');
+        botonSiguiente.textContent = '»';
+        botonSiguiente.onclick = () => aplicarFiltros(paginaActual + 1);
+        paginacionContainer.appendChild(botonSiguiente);
+    }
 }
+
+
 
 // -------------------------- AÑADIR A BIBLIOTECA -------------------------- //
 function addToLibrary(button) {
