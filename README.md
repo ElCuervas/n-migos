@@ -1,26 +1,27 @@
 ```mermaid
 gitGraph
    commit id: "Inicio"
-   branch develop
-   checkout develop
-   commit id: "Commit Develop"
-   branch feature/mi-feature
-   checkout feature/mi-feature
-   commit id: "Commit Feature"
-   checkout develop
-   merge feature/mi-feature
-   branch release/v1.0.0
-   checkout release/v1.0.0
-   commit id: "Preparar Release"
+   branch dev
+   checkout dev
+   commit id: "Primera integración"
+   branch backend
+   branch fronted
+   checkout backend
+   branch ftr/backend-nueva-funcionalidad
+   checkout ftr/backend-nueva-funcionalidad
+   commit id: "Feature backend"
+   checkout backend
+   merge ftr/backend-nueva-funcionalidad
+   checkout dev
+   merge backend
+   checkout fronted
+   branch ftr/fronted-nueva-funcionalidad
+   checkout ftr/fronted-nueva-funcionalidad
+   commit id: "Feature fronted"
+   checkout fronted
+   merge ftr/fronted-nueva-funcionalidad
+   checkout dev
+   merge fronted
    checkout main
-   merge release/v1.0.0
-   checkout develop
-   merge release/v1.0.0
-   branch hotfix/urgente
-   checkout hotfix/urgente
-   commit id: "Fix Urgente"
-   checkout main
-   merge hotfix/urgente
-   checkout develop
-   merge hotfix/urgente
+   merge dev
 ```
